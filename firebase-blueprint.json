@@ -58,6 +58,28 @@
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["topic", "code", "output", "timestamp"]
+    },
+    "Memory": {
+      "title": "Memory",
+      "description": "Stores user preferences, milestones, and struggles for AI context.",
+      "type": "object",
+      "properties": {
+        "category": { "type": "string", "enum": ["preference", "milestone", "struggle", "general"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["category", "content", "timestamp"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Stores chat history between the user and the AI.",
+      "type": "object",
+      "properties": {
+        "role": { "type": "string", "enum": ["user", "model"] },
+        "content": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["role", "content", "timestamp"]
     }
   },
   "firestore": {
@@ -76,6 +98,14 @@
     "/users/{userId}/attempts/{attemptId}": {
       "schema": { "$ref": "#/entities/CodeAttempt" },
       "description": "User's code attempts."
+    },
+    "/users/{userId}/memories/{memoryId}": {
+      "schema": { "$ref": "#/entities/Memory" },
+      "description": "User's learning memories and preferences."
+    },
+    "/users/{userId}/chats/{chatId}": {
+      "schema": { "$ref": "#/entities/ChatMessage" },
+      "description": "User's chat history."
     }
   }
 }
