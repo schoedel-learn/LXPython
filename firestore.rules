@@ -1,0 +1,155 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: userId (matching auth.uid)
+    // Fields:
+    //   - uid: string (required)
+    //   - customId: string (required, 8 chars)
+    //   - firstName: string (required)
+    //   - email: string (required)
+    //   - phoneNumber: string (optional)
+    //   - country: string (optional)
+    //   - dateJoined: string (required, ISO 8601)
+    //   - birthday: string (optional, MM/DD)
+    //   - pythonExperience: string (required, enum)
+    //   - projectInterests: list of strings (optional)
+    //
+    // Collection: users/{userId}/secrets
+    // Document ID: auto-generated
+    // Fields:
+    //   - key: string (required)
+    //   - value: string (required)
+    //   - createdAt: string (required, ISO 8601)
+    //   - updatedAt: string (required, ISO 8601)
+    //
+    // Collection: users/{userId}/progress
+    // Document ID: auto-generated
+    // Fields:
+    //   - concept: string (required)
+    //   - masteryLevel: number (required, 0-100)
+    //   - lastInteracted: string (required, ISO 8601)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.email == 'schoedelb@gmail.com';
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasOnlyAllowedFields(allowedFields) {
+      return request.resource.data.keys().hasOnly(allowedFields);
+    }
+
+    function hasRequiredFields(requiredFields) {
+      return request.resource.data.keys().hasAll(requiredFields);
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function isValidDateString(dateStr) {
+      return dateStr is string && dateStr.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.*Z?$");
+    }
+
+    function isValidUser(data) {
+      let allowedFields = ['uid', 'customId', 'firstName', 'email', 'phoneNumber', 'country', 'dateJoined', 'birthday', 'pythonExperience', 'projectInterests', 'newsletterOptIn', 'newsletterConfirmed', 'registrationComplete'];
+      let requiredFields = ['uid', 'customId', 'firstName', 'email', 'dateJoined', 'pythonExperience'];
+      
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(requiredFields) &&
+             data.uid == request.auth.uid &&
+             data.customId is string && data.customId.size() == 8 &&
+             data.firstName is string && data.firstName.size() > 0 && data.firstName.size() < 100 &&
+             isValidEmail(data.email) &&
+             (!('phoneNumber' in data) || (data.phoneNumber is string && data.phoneNumber.size() < 20)) &&
+             (!('country' in data) || (data.country is string && data.country.size() < 100)) &&
+             isValidDateString(data.dateJoined) &&
+             (!('birthday' in data) || (data.birthday is string && data.birthday.size() == 5)) &&
+             data.pythonExperience in ['Beginner', 'Intermediate', 'Advanced', 'Expert'] &&
+             (!('projectInterests' in data) || (data.projectInterests is list && data.projectInterests.size() <= 20)) &&
+             (!('newsletterOptIn' in data) || data.newsletterOptIn is bool) &&
+             (!('newsletterConfirmed' in data) || data.newsletterConfirmed is bool) &&
+             (!('registrationComplete' in data) || data.registrationComplete is bool);
+    }
+
+    function isValidSecret(data) {
+      let allowedFields = ['key', 'value', 'createdAt', 'updatedAt'];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(allowedFields) &&
+             data.key is string && data.key.size() > 0 && data.key.size() < 100 &&
+             data.value is string && data.value.size() > 0 && data.value.size() < 1000 &&
+             isValidDateString(data.createdAt) &&
+             isValidDateString(data.updatedAt);
+    }
+
+    function isValidProgress(data) {
+      let allowedFields = ['concept', 'masteryLevel', 'lastInteracted'];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(allowedFields) &&
+             data.concept is string && data.concept.size() > 0 && data.concept.size() < 100 &&
+             data.masteryLevel is number && data.masteryLevel >= 0 && data.masteryLevel <= 100 &&
+             isValidDateString(data.lastInteracted);
+    }
+
+    function isValidAttempt(data) {
+      let allowedFields = ['topic', 'code', 'output', 'timestamp'];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(allowedFields) &&
+             data.topic is string && data.topic.size() > 0 && data.topic.size() < 200 &&
+             data.code is string && data.code.size() < 10000 &&
+             data.output is string && data.output.size() < 10000 &&
+             isValidDateString(data.timestamp);
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      allow update: if isOwner(userId) && isValidUser(request.resource.data) && 
+                    request.resource.data.uid == resource.data.uid &&
+                    request.resource.data.dateJoined == resource.data.dateJoined;
+      allow delete: if isOwner(userId);
+
+      match /secrets/{secretId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidSecret(request.resource.data);
+        allow update: if isOwner(userId) && isValidSecret(request.resource.data) &&
+                      request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isOwner(userId);
+      }
+
+      match /progress/{progressId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidProgress(request.resource.data);
+        allow update: if isOwner(userId) && isValidProgress(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+
+      match /attempts/{attemptId} {
+        allow read: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidAttempt(request.resource.data);
+        allow update: if isOwner(userId) && isValidAttempt(request.resource.data);
+        allow delete: if isOwner(userId);
+      }
+    }
+  }
+}

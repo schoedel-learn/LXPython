@@ -25,7 +25,11 @@
     "@angular/ssr": "^21.0.0",
     "@google/genai": "^1.27.0",
     "express": "^5.1.0",
+    "firebase": "^12.11.0",
+    "monaco-editor": "^0.55.1",
     "motion": "^12.23.24",
+    "nanoid": "^5.1.7",
+    "ngx-monaco-editor-v2": "^21.1.4",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"
   },

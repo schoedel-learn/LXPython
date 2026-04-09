@@ -1,5 +1,5 @@
 {
-  "name": "",
-  "description": "",
+  "name": "NeuroLXP: Adaptive Python Learning",
+  "description": "A Progressive Web App Learning Experience Platform (LXP) featuring agentic adaptive learning, user profiles, secure .env storage, and project export, tailored for learners with ADHD.",
   "requestFramePermissions": []
 }

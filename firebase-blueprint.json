@@ -1,0 +1,81 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "A user profile in the Learning Experience Platform.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "Firebase Auth UID" },
+        "customId": { "type": "string", "description": "Unique 8-character user ID" },
+        "firstName": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phoneNumber": { "type": "string" },
+        "country": { "type": "string" },
+        "dateJoined": { "type": "string", "format": "date-time" },
+        "birthday": { "type": "string", "description": "MM/DD format" },
+        "pythonExperience": { 
+          "type": "string", 
+          "enum": ["Beginner", "Intermediate", "Advanced", "Expert"] 
+        },
+        "projectInterests": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["uid", "customId", "firstName", "email", "dateJoined", "pythonExperience"]
+    },
+    "UserSecret": {
+      "title": "UserSecret",
+      "description": "Securely stored environment variables for user projects.",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "value": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["key", "value", "createdAt", "updatedAt"]
+    },
+    "LearningProgress": {
+      "title": "LearningProgress",
+      "description": "Tracks a user's mastery of specific Python concepts.",
+      "type": "object",
+      "properties": {
+        "concept": { "type": "string" },
+        "masteryLevel": { "type": "number", "description": "0 to 100" },
+        "lastInteracted": { "type": "string", "format": "date-time" }
+      },
+      "required": ["concept", "masteryLevel", "lastInteracted"]
+    },
+    "CodeAttempt": {
+      "title": "CodeAttempt",
+      "description": "Stores user's code snippets and execution attempts.",
+      "type": "object",
+      "properties": {
+        "topic": { "type": "string" },
+        "code": { "type": "string" },
+        "output": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["topic", "code", "output", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "User profiles."
+    },
+    "/users/{userId}/secrets/{secretId}": {
+      "schema": { "$ref": "#/entities/UserSecret" },
+      "description": "User's environment variables."
+    },
+    "/users/{userId}/progress/{progressId}": {
+      "schema": { "$ref": "#/entities/LearningProgress" },
+      "description": "User's learning progress."
+    },
+    "/users/{userId}/attempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/CodeAttempt" },
+      "description": "User's code attempts."
+    }
+  }
+}
