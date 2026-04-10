@@ -48,6 +48,12 @@ import { FormsModule } from '@angular/forms';
             <span class="font-medium">Learn</span>
           </a>
           
+          <a routerLink="/dashboard/forum" routerLinkActive="bg-[#8ab4f8]/10 text-[#8ab4f8]" 
+            class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#c4c7c5] hover:bg-[#282a2c] transition-colors">
+            <mat-icon class="h-5 w-5">forum</mat-icon>
+            <span class="font-medium">Community</span>
+          </a>
+          
           @if (isAdmin()) {
             <a routerLink="/dashboard/secrets" routerLinkActive="bg-[#8ab4f8]/10 text-[#8ab4f8]"
               class="flex items-center gap-3 px-4 py-3 rounded-xl text-[#c4c7c5] hover:bg-[#282a2c] transition-colors">

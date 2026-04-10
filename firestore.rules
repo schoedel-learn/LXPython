@@ -130,9 +130,37 @@ service cloud.firestore {
       let allowedFields = ['role', 'content', 'timestamp'];
       return hasOnlyAllowedFields(allowedFields) &&
              hasRequiredFields(allowedFields) &&
-             data.role in ['user', 'model'] &&
+             data.role in ['user', 'model', 'system', 'assistant'] &&
              data.content is string && data.content.size() > 0 && data.content.size() < 10000 &&
              isValidDateString(data.timestamp);
+    }
+
+    function isValidForumPost(data) {
+      let allowedFields = ['authorId', 'authorName', 'title', 'content', 'tags', 'status', 'replyCount', 'createdAt', 'updatedAt'];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(allowedFields) &&
+             data.authorId is string && data.authorId.size() > 0 &&
+             data.authorName is string && data.authorName.size() > 0 && data.authorName.size() < 100 &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 200 &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 10000 &&
+             data.tags is list && data.tags.size() <= 5 &&
+             data.status in ['active', 'flagged', 'hidden'] &&
+             data.replyCount is number && data.replyCount >= 0 &&
+             isValidDateString(data.createdAt) &&
+             isValidDateString(data.updatedAt);
+    }
+
+    function isValidForumReply(data) {
+      let allowedFields = ['postId', 'authorId', 'authorName', 'content', 'status', 'createdAt', 'updatedAt'];
+      return hasOnlyAllowedFields(allowedFields) &&
+             hasRequiredFields(allowedFields) &&
+             data.postId is string && data.postId.size() > 0 &&
+             data.authorId is string && data.authorId.size() > 0 &&
+             data.authorName is string && data.authorName.size() > 0 && data.authorName.size() < 100 &&
+             data.content is string && data.content.size() > 0 && data.content.size() < 10000 &&
+             data.status in ['active', 'flagged', 'hidden'] &&
+             isValidDateString(data.createdAt) &&
+             isValidDateString(data.updatedAt);
     }
 
     // ===============================================================
@@ -181,6 +209,41 @@ service cloud.firestore {
         allow create: if isOwner(userId) && isValidChatMessage(request.resource.data);
         allow update: if isOwner(userId) && isValidChatMessage(request.resource.data);
         allow delete: if isOwner(userId);
+      }
+    }
+
+    match /forumPosts/{postId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && 
+                    isValidForumPost(request.resource.data) && 
+                    request.resource.data.authorId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+                    isValidForumPost(request.resource.data) && 
+                    request.resource.data.authorId == resource.data.authorId &&
+                    request.resource.data.createdAt == resource.data.createdAt &&
+                    (
+                      request.resource.data.authorId == request.auth.uid || 
+                      isAdmin() ||
+                      (
+                        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['replyCount', 'updatedAt']) &&
+                        request.resource.data.replyCount == resource.data.replyCount + 1
+                      )
+                    );
+      allow delete: if isAuthenticated() && (resource.data.authorId == request.auth.uid || isAdmin());
+
+      match /replies/{replyId} {
+        allow read: if isAuthenticated();
+        allow create: if isAuthenticated() && 
+                      isValidForumReply(request.resource.data) && 
+                      request.resource.data.authorId == request.auth.uid &&
+                      request.resource.data.postId == postId;
+        allow update: if isAuthenticated() && 
+                      isValidForumReply(request.resource.data) && 
+                      (request.resource.data.authorId == request.auth.uid || isAdmin()) &&
+                      request.resource.data.authorId == resource.data.authorId &&
+                      request.resource.data.postId == resource.data.postId &&
+                      request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if isAuthenticated() && (resource.data.authorId == request.auth.uid || isAdmin());
       }
     }
   }

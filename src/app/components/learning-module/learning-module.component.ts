@@ -341,16 +341,37 @@ export class LearningModuleComponent implements OnInit {
       const result = await this.pythonService.runCode(this.code);
       this.outputResult.set(result);
       
+      const combinedOutput = [
+        result.stdout ? `STDOUT:\n${result.stdout}` : '',
+        result.stderr ? `STDERR:\n${result.stderr}` : '',
+        result.error ? `ERROR:\n${result.error}` : ''
+      ].filter(Boolean).join('\n\n');
+
       // Save the attempt
       if (this.topic) {
-        const combinedOutput = [
-          result.stdout ? `STDOUT:\n${result.stdout}` : '',
-          result.stderr ? `STDERR:\n${result.stderr}` : '',
-          result.error ? `ERROR:\n${result.error}` : ''
-        ].filter(Boolean).join('\n\n');
-        
         await this.attemptService.saveAttempt(this.topic, this.code, combinedOutput || '(No output)');
       }
+
+      // Send execution feedback to AI
+      const profile = this.authService.userProfile();
+      
+      // Optimistically show a loading state in chat
+      this.isLoading.set(true);
+      
+      const feedbackResponse = await this.learningService.sendExecutionFeedback(this.code, combinedOutput || '(No output)', profile);
+      
+      // Add model response to UI
+      this.chatMessages.update(msgs => [...msgs, {
+        role: 'model',
+        content: feedbackResponse,
+        timestamp: new Date().toISOString()
+      }]);
+      
+      // Auto-switch to chat tab on mobile so they see the feedback
+      if (window.innerWidth < 768) {
+        this.activeMobileTab.set('chat');
+      }
+
     } catch (error: unknown) {
       this.outputResult.set({
         stdout: '',

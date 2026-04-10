@@ -6,6 +6,8 @@ import { LearningModuleComponent } from './components/learning-module/learning-m
 import { SecretsManagerComponent } from './components/secrets-manager/secrets-manager.component';
 import { OnboardingComponent } from './components/onboarding/onboarding.component';
 import { AdminPortalComponent } from './components/admin-portal/admin-portal.component';
+import { ForumListComponent } from './components/forum-list/forum-list.component';
+import { ForumPostComponent } from './components/forum-post/forum-post.component';
 import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
@@ -68,6 +70,8 @@ export const routes: Routes = [
     children: [
       { path: '', redirectTo: 'learn', pathMatch: 'full' },
       { path: 'learn', component: LearningModuleComponent },
+      { path: 'forum', component: ForumListComponent },
+      { path: 'forum/:id', component: ForumPostComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'secrets', component: SecretsManagerComponent },
       { path: 'admin', component: AdminPortalComponent }

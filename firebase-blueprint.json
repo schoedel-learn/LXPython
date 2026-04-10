@@ -75,11 +75,43 @@
       "description": "Stores chat history between the user and the AI.",
       "type": "object",
       "properties": {
-        "role": { "type": "string", "enum": ["user", "model"] },
+        "role": { "type": "string", "enum": ["user", "model", "system", "assistant"] },
         "content": { "type": "string" },
         "timestamp": { "type": "string", "format": "date-time" }
       },
       "required": ["role", "content", "timestamp"]
+    },
+    "ForumPost": {
+      "title": "ForumPost",
+      "description": "A post in the peer-to-peer learning forum.",
+      "type": "object",
+      "properties": {
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "string", "enum": ["active", "flagged", "hidden"] },
+        "replyCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["authorId", "authorName", "title", "content", "tags", "status", "replyCount", "createdAt", "updatedAt"]
+    },
+    "ForumReply": {
+      "title": "ForumReply",
+      "description": "A reply to a forum post.",
+      "type": "object",
+      "properties": {
+        "postId": { "type": "string" },
+        "authorId": { "type": "string" },
+        "authorName": { "type": "string" },
+        "content": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "flagged", "hidden"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["postId", "authorId", "authorName", "content", "status", "createdAt", "updatedAt"]
     }
   },
   "firestore": {
@@ -106,6 +138,14 @@
     "/users/{userId}/chats/{chatId}": {
       "schema": { "$ref": "#/entities/ChatMessage" },
       "description": "User's chat history."
+    },
+    "/forumPosts/{postId}": {
+      "schema": { "$ref": "#/entities/ForumPost" },
+      "description": "Peer-to-peer forum posts."
+    },
+    "/forumPosts/{postId}/replies/{replyId}": {
+      "schema": { "$ref": "#/entities/ForumReply" },
+      "description": "Replies to a forum post."
     }
   }
 }

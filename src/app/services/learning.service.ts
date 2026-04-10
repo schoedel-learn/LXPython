@@ -1,17 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { GoogleGenAI, Type, FunctionDeclaration } from '@google/genai';
+import OpenAI from 'openai';
 import { UserProfile } from './auth.service';
 import { MemoryService } from './memory.service';
 import { collection, doc, setDoc, getDocs, query, orderBy } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 
 // Using the global variable defined in globals.d.ts or .env
-declare const GEMINI_API_KEY: string;
+declare const OPENAI_API_KEY: string;
 declare const DEFAULT_AI_MODEL: string | undefined;
 
 export interface ChatMessage {
   id?: string;
-  role: 'user' | 'model';
+  role: 'user' | 'model' | 'system' | 'assistant';
   content: string;
   timestamp: string;
 }
@@ -20,11 +20,14 @@ export interface ChatMessage {
   providedIn: 'root'
 })
 export class LearningAgentService {
-  private ai: GoogleGenAI;
+  private ai: OpenAI;
   private memoryService = inject(MemoryService);
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+    this.ai = new OpenAI({ 
+      apiKey: typeof OPENAI_API_KEY !== 'undefined' ? OPENAI_API_KEY : '', 
+      dangerouslyAllowBrowser: true 
+    });
   }
 
   async getChatHistory(): Promise<ChatMessage[]> {
@@ -46,7 +49,7 @@ export class LearningAgentService {
     }
   }
 
-  async saveChatMessage(role: 'user' | 'model', content: string): Promise<void> {
+  async saveChatMessage(role: 'user' | 'model' | 'system' | 'assistant', content: string): Promise<void> {
     const user = auth.currentUser;
     if (!user) return;
 
@@ -64,12 +67,19 @@ export class LearningAgentService {
     }
   }
 
-  async sendMessage(message: string, userProfile: UserProfile | null): Promise<string> {
+  async sendExecutionFeedback(code: string, output: string, userProfile: UserProfile | null): Promise<string> {
+    const message = `[System Context: I just executed the following code in my editor:\n\n\`\`\`python\n${code}\n\`\`\`\n\nExecution Result:\n${output}\n\nPlease provide brief, encouraging feedback or hints if there's an error. Do not write the full solution for me.]`;
+    return this.sendMessage(message, userProfile, true);
+  }
+
+  async sendMessage(message: string, userProfile: UserProfile | null, isHiddenFromUI = false): Promise<string> {
     const user = auth.currentUser;
     if (!user) throw new Error('User not authenticated');
 
-    // 1. Save user message
-    await this.saveChatMessage('user', message);
+    // 1. Save user message (if it's not a hidden system context message)
+    if (!isHiddenFromUI) {
+      await this.saveChatMessage('user', message);
+    }
 
     // 2. Fetch context
     const memories = await this.memoryService.getMemories();
@@ -94,71 +104,98 @@ export class LearningAgentService {
       5. Keep responses concise and highly structured. Use markdown formatting.
     `;
 
-    const saveMemoryDeclaration: FunctionDeclaration = {
-      name: 'save_learner_memory',
-      description: 'Save an insight, preference, milestone, or struggle about the learner to their permanent memory log.',
-      parameters: {
-        type: Type.OBJECT,
-        properties: {
-          category: {
-            type: Type.STRING,
-            description: 'The category of the memory: preference, milestone, struggle, or general.',
+    const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
+      {
+        type: 'function',
+        function: {
+          name: 'save_learner_memory',
+          description: 'Save an insight, preference, milestone, or struggle about the learner to their permanent memory log.',
+          parameters: {
+            type: 'object',
+            properties: {
+              category: {
+                type: 'string',
+                enum: ['preference', 'milestone', 'struggle', 'general'],
+                description: 'The category of the memory.',
+              },
+              content: {
+                type: 'string',
+                description: 'The content of the memory to save.',
+              },
+            },
+            required: ['category', 'content'],
           },
-          content: {
-            type: Type.STRING,
-            description: 'The content of the memory to save.',
-          },
-        },
-        required: ['category', 'content'],
-      },
-    };
+        }
+      }
+    ];
 
     // 3. Fetch previous chat history to build the session
     const history = await this.getChatHistory();
-    // Exclude the message we just saved to avoid duplication in the prompt
-    const previousHistory = history.slice(0, -1).map(msg => ({
-      role: msg.role,
-      parts: [{ text: msg.content }]
-    }));
+    
+    // Map our DB roles to OpenAI roles
+    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      { role: 'system', content: systemInstruction },
+      ...history.map(msg => ({
+        role: (msg.role === 'model' ? 'assistant' : msg.role) as 'user' | 'assistant' | 'system',
+        content: msg.content
+      }))
+    ];
 
-    const modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gemini-2.5-flash';
+    // Add the current message
+    messages.push({ role: 'user', content: message });
+
+    const modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gpt-5.4-mini';
 
     try {
-      const chat = this.ai.chats.create({
+      const response = await this.ai.chat.completions.create({
         model: modelName,
-        config: {
-          systemInstruction: systemInstruction,
-          temperature: 0.7,
-          tools: [{ functionDeclarations: [saveMemoryDeclaration] }],
-        },
-        history: previousHistory
+        messages: messages,
+        temperature: 0.7,
+        tools: tools,
+        reasoning_effort: 'medium' // Requested by user for models that support it
       });
 
-      let response = await chat.sendMessage({ message });
-      let finalResponseText = response.text || '';
+      const responseMessage = response.choices[0].message;
+      let finalResponseText = responseMessage.content || '';
 
       // Handle function calls
-      if (response.functionCalls && response.functionCalls.length > 0) {
-        for (const call of response.functionCalls) {
-          if (call.name === 'save_learner_memory') {
-            const args = call.args as Record<string, unknown>;
-            if (typeof args['category'] === 'string' && typeof args['content'] === 'string') {
-              const category = args['category'] as 'preference' | 'milestone' | 'struggle' | 'general';
-              await this.memoryService.saveMemory(category, args['content']);
-              
-              // Send the result back to the model
-              response = await chat.sendMessage({
-                message: [{
-                  functionResponse: {
-                    name: 'save_learner_memory',
-                    response: { status: 'success', message: 'Memory saved successfully.' }
-                  }
-                }]
+      if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
+        messages.push(responseMessage); // Add the assistant's tool call to history
+        
+        for (const toolCall of responseMessage.tool_calls) {
+          if (toolCall.type === 'function' && toolCall.function.name === 'save_learner_memory') {
+            try {
+              const args = JSON.parse(toolCall.function.arguments);
+              if (args.category && args.content) {
+                await this.memoryService.saveMemory(args.category, args.content);
+                
+                // Send the result back to the model
+                messages.push({
+                  role: 'tool',
+                  tool_call_id: toolCall.id,
+                  content: JSON.stringify({ status: 'success', message: 'Memory saved successfully.' })
+                });
+              }
+            } catch (e) {
+              console.error('Failed to parse tool call arguments:', e);
+              messages.push({
+                role: 'tool',
+                tool_call_id: toolCall.id,
+                content: JSON.stringify({ status: 'error', message: 'Invalid JSON arguments' })
               });
-              finalResponseText = response.text || finalResponseText;
             }
           }
         }
+        
+        // Get the final response after tool execution
+        const secondResponse = await this.ai.chat.completions.create({
+          model: modelName,
+          messages: messages,
+          temperature: 0.7,
+          reasoning_effort: 'medium'
+        });
+        
+        finalResponseText = secondResponse.choices[0].message.content || finalResponseText;
       }
 
       // 4. Save AI response
