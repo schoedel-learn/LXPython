@@ -1,0 +1,62 @@
+# Design Specification & Prompt: LXPython - ADHD-Optimized Learning App
+
+## 1. Brand Identity & Creative North Star
+**Brand Name:** LXPython
+**Creative North Star:** "The Digital Sanctuary"
+**Core Value Prop:** An AI-facilitated Python learning environment designed specifically for neurodivergent developers (ADHD focus), providing a distraction-free, high-structure, and high-contrast experience.
+
+---
+
+## 2. Design Guidelines (The ADHD-First Protocol)
+To ensure maximum focus and minimum cognitive load, all designs MUST follow these rules:
+*   **Zero Overlap:** No elements should ever overlap. No floating action buttons (FABs) blocking text, no modals covering essential context, and no complex transparency.
+*   **High Contrast:** Use deep slate backgrounds (`#081425`, `#152031`) with soft off-white or teal text for maximum legibility without eye strain.
+*   **Large Touch Targets:** Every interactive element must be large and easily tappable, with clear visual feedback on press.
+*   **Distraction-Free Layout:** Ample whitespace (padding/margins) to separate concepts. Use "tonal shifts" in background colors rather than borders to define sections.
+*   **Typography:**
+    *   **Body:** Large, highly legible fonts (e.g., Lexend or Space Grotesk).
+    *   **Headers:** Bold, clear hierarchy using Space Grotesk.
+    *   **Accessibility:** Every screen MUST include an "AA" toggle in the header for font size adjustment.
+*   **Color Palette:**
+    *   **Backgrounds:** Deep Slate / Navy (`#081425`, `#152031`).
+    *   **Primary Action:** Focused Teal (`#14B8A6` / `#4fdbc8`).
+    *   **Feedback:** Soft Red for errors, Teal for success.
+
+---
+
+## 3. Screen Architecture & Key Components
+
+### A. Global Components
+*   **TopAppBar:** Minimalist. Title on left, "AA" toggle and settings/profile icons on right. No complex menus.
+*   **BottomNavBar:** 4 distinct destinations (Home/Dashboard, Loop/Learn, Community, Profile). Large icons with clear labels.
+
+### B. Core Screens
+1.  **Authentication:** Simple tech-focused logo. Priority on SSO (Google, GitHub, Apple). Clean opt-in toggles for notifications.
+2.  **Agentic Dashboard:** Personalized greeting. "Current Focus" card. "Multi-Agent Network" visualization using distinct avatars for AI facilitators (Theory Guide, Code Coach, Syntax Debugger).
+3.  **The Learning Loop (Core Interface):**
+    *   **Top Tabs:** Swipeable system for "Live Docs", "AI Chat", and "Code Editor".
+    *   **Editor:** High-contrast syntax highlighting. Integrated terminal output directly below the code area. Large "Run Code" button.
+4.  **Community & Knowledge Hub:** Structured feed of cards. Search bar at top. Cards include code snippets, user avatars, and metrics (Upvotes, Replies).
+5.  **Profile & Progress:** Circular avatar. "Zone of Proximal Development" visualization (Progress rings or Radar chart). Rounded, widely-spaced list tiles for menu options.
+
+---
+
+## 4. Redesign Prompt (Copy & Paste)
+```markdown
+Create a modern, ADHD-optimized mobile UI for "LXPython", a Python learning app. 
+
+### THEME & STYLE:
+- **Palette:** Deep Slate backgrounds (#081425), Soft Teal accents (#14B8A6), Off-white text.
+- **Typography:** Use 'Space Grotesk' for headers and 'Lexend' for body. Large, high-legibility sizing.
+- **Rules:** Absolute zero overlap. High contrast. Large touch targets. No FABs. Distraction-free.
+
+### SCREENS TO DESIGN:
+1. **Auth:** Logo, Google/GitHub/Apple SSO, clean registration form, large notification opt-in toggles.
+2. **Dashboard:** Greeting, "Current Focus" card, and a "Multi-Agent Network" section showing icons for AI facilitators.
+3. **Learning Loop (Editor):** Three-tab system (Docs, Chat, Code). Code view must have a syntax-highlighted editor, a large 'Run Code' button, and a terminal output box immediately below.
+4. **Community Hub:** A feed of discussion cards with snippets, upvotes, and replies. Search bar at top.
+5. **Profile:** Circular avatar, progress rings for skill tracking, and widely-spaced menu tiles.
+
+### ACCESSIBILITY:
+Include an "AA" text-adjustment toggle in every header. Use tonal background shifts to separate sections instead of thin lines.
+```

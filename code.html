@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&amp;family=Lexend:wght@100..900&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-high": "#1f2a3c",
+                        "on-secondary": "#003731",
+                        "on-error": "#690005",
+                        "tertiary-container": "#f38764",
+                        "secondary": "#a0d0c6",
+                        "on-tertiary-container": "#6c2106",
+                        "inverse-surface": "#d8e3fb",
+                        "secondary-fixed-dim": "#a0d0c6",
+                        "on-secondary-fixed-variant": "#1f4e47",
+                        "surface-dim": "#081425",
+                        "on-primary-fixed-variant": "#005048",
+                        "inverse-primary": "#006b5f",
+                        "background": "#081425",
+                        "surface-tint": "#4fdbc8",
+                        "on-primary": "#003731",
+                        "tertiary": "#ffb59e",
+                        "on-tertiary": "#5e1800",
+                        "error-container": "#93000a",
+                        "surface-variant": "#2a3548",
+                        "primary-fixed": "#71f8e4",
+                        "outline": "#859490",
+                        "on-error-container": "#ffdad6",
+                        "surface-bright": "#2f3a4c",
+                        "outline-variant": "#3c4947",
+                        "on-secondary-container": "#92c2b8",
+                        "secondary-fixed": "#bbece2",
+                        "on-tertiary-fixed-variant": "#7c2d11",
+                        "inverse-on-surface": "#263143",
+                        "tertiary-fixed-dim": "#ffb59e",
+                        "surface-container": "#152031",
+                        "primary-container": "#14b8a6",
+                        "surface-container-highest": "#2a3548",
+                        "on-background": "#d8e3fb",
+                        "on-primary-container": "#00423b",
+                        "tertiary-fixed": "#ffdbd0",
+                        "on-tertiary-fixed": "#3a0b00",
+                        "on-surface-variant": "#bbcac6",
+                        "on-surface": "#d8e3fb",
+                        "surface-container-lowest": "#040e1f",
+                        "surface": "#081425",
+                        "on-secondary-fixed": "#00201c",
+                        "primary-fixed-dim": "#4fdbc8",
+                        "surface-container-low": "#111c2d",
+                        "secondary-container": "#21514a",
+                        "primary": "#4fdbc8",
+                        "error": "#ffb4ab",
+                        "on-primary-fixed": "#00201c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Lexend"],
+                        "label": ["Lexend"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .syntax-comment { color: #859490; font-style: italic; }
+        .syntax-keyword { color: #ffb59e; font-weight: 600; }
+        .syntax-function { color: #4fdbc8; }
+        .syntax-variable { color: #d8e3fb; }
+        .syntax-string { color: #a0d0c6; }
+        .syntax-number { color: #f38764; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body selection:bg-primary/30 min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#081425] w-full top-0 sticky z-40 transition-colors duration-300">
+<div class="flex items-center justify-between px-6 py-4 w-full bg-[#152031]">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#14B8A6]" data-icon="terminal">terminal</span>
+<h1 class="font-['Space_Grotesk'] text-2xl font-bold text-[#4fdbc8] tracking-tighter">LXPython</h1>
+</div>
+<button class="font-['Space_Grotesk'] text-lg font-bold tracking-tight text-[#d8e3fb] opacity-70 hover:bg-[#1f2a3c] px-3 py-1 rounded-lg transition-all duration-300 active:scale-95">
+                AA
+            </button>
+</div>
+</header>
+<main class="flex-1 flex flex-col px-6 pt-8 pb-32 max-w-5xl mx-auto w-full gap-8">
+<!-- Editor Header Info -->
+<section class="flex justify-between items-end">
+<div class="space-y-1">
+<span class="font-label text-[11px] uppercase tracking-widest text-primary/60">Module 01</span>
+<h2 class="font-headline text-3xl font-bold tracking-tight text-on-background">Fibonacci Sequence</h2>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high rounded-full">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="font-label text-[11px] font-medium text-on-surface-variant">Live Editor</span>
+</div>
+</section>
+<!-- Python Code Editor -->
+<div class="bg-surface-container-lowest rounded-xl p-1 overflow-hidden ring-1 ring-white/5 shadow-2xl">
+<div class="bg-surface-container-high/50 px-4 py-2 flex items-center justify-between">
+<div class="flex gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-error/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-tertiary/40"></div>
+<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+</div>
+<span class="font-mono text-xs text-on-surface-variant/50">main.py</span>
+</div>
+<div class="p-6 font-mono text-lg leading-relaxed overflow-x-auto min-h-[240px]">
+<pre class="whitespace-pre"><code><span class="syntax-comment"># Task: Calculate Fibonacci sequence</span>
+<span class="syntax-keyword">def</span> <span class="syntax-function">fib</span>(n):
+    a, b = <span class="syntax-number">0</span>, <span class="syntax-number">1</span>
+<span class="syntax-keyword">while</span> a &lt; n
+        <span class="syntax-function">print</span>(a, end=<span class="syntax-string">' '</span>)
+        a, b = b, a+b
+
+<span class="syntax-function">fib</span>(<span class="syntax-number">1000</span>)</code></pre>
+</div>
+</div>
+<!-- Run Action -->
+<div class="flex flex-col gap-6">
+<button class="group relative w-full overflow-hidden bg-gradient-to-br from-[#4fdbc8] to-[#14b8a6] text-on-primary font-headline text-xl font-bold py-5 rounded-xl transition-all duration-300 active:scale-[0.98] flex items-center justify-center gap-3">
+<!-- Inner Glow for Premium hardware feel -->
+<div class="absolute inset-0 border-t-2 border-white/10 rounded-xl pointer-events-none"></div>
+<span class="material-symbols-outlined" data-icon="play_arrow" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                Run Code
+            </button>
+<!-- Terminal Output Section -->
+<div class="bg-surface-container rounded-xl overflow-hidden">
+<div class="flex items-center gap-2 px-6 py-3 bg-surface-container-high/30">
+<span class="material-symbols-outlined text-xs text-on-surface-variant" data-icon="terminal">terminal</span>
+<span class="font-label text-[10px] uppercase tracking-widest font-bold text-on-surface-variant">Output Console</span>
+</div>
+<div class="p-6 bg-surface-container-low min-h-[120px] font-mono text-primary-fixed-dim leading-relaxed"><div class="flex flex-col gap-1 font-mono text-sm">
+<div class="flex items-start gap-4">
+<span class="text-on-surface-variant/30 select-none">&gt;</span>
+<div class="text-on-surface-variant/80">
+            File "main.py", line 4<br/>
+                while a &lt; n<br/>
+                           ^
+        </div>
+</div>
+<div class="flex items-start gap-4 mt-1">
+<span class="text-on-surface-variant/30 select-none"> </span>
+<div class="text-[#ffb4ab] font-bold">
+            SyntaxError: expected ':'
+        </div>
+</div>
+<div class="mt-4 flex items-start gap-4 opacity-40">
+<span class="text-on-surface-variant/30 select-none">&gt;</span>
+<span class="animate-pulse block w-2 h-5 bg-primary"></span>
+</div>
+</div></div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 bg-[#152031] rounded-t-xl">
+<div class="flex justify-around items-center px-4 pb-6 pt-3">
+<!-- Home -->
+<a class="flex flex-col items-center justify-center text-[#d8e3fb] opacity-60 px-4 py-2 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-['Lexend'] text-[11px] font-medium tracking-wide uppercase mt-1">Home</span>
+</a>
+<!-- Loop (Active) -->
+<a class="flex flex-col items-center justify-center text-[#4fdbc8] bg-[#1f2a3c] rounded-xl px-4 py-2 active:scale-95 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="sync" style="font-variation-settings: 'FILL' 1;">sync</span>
+<span class="font-['Lexend'] text-[11px] font-medium tracking-wide uppercase mt-1">Loop</span>
+</a>
+<!-- Social -->
+<a class="flex flex-col items-center justify-center text-[#d8e3fb] opacity-60 px-4 py-2 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Lexend'] text-[11px] font-medium tracking-wide uppercase mt-1">Social</span>
+</a>
+<!-- Profile -->
+<a class="flex flex-col items-center justify-center text-[#d8e3fb] opacity-60 px-4 py-2 hover:opacity-100 transition-opacity" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Lexend'] text-[11px] font-medium tracking-wide uppercase mt-1">Profile</span>
+</a>
+</div>
+</nav>
+</body></html>
