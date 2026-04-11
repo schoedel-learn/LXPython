@@ -105,11 +105,11 @@ import { FormsModule } from '@angular/forms';
       <!-- Profile Drawer Overlay -->
       @if (isProfileDrawerOpen) {
         <div class="absolute inset-0 bg-black/50 z-[60] transition-opacity" (click)="isProfileDrawerOpen = false" (keydown.enter)="isProfileDrawerOpen = false" tabindex="0" role="button" aria-label="Close profile drawer"></div>
-        <div class="absolute inset-y-0 right-0 z-[70] flex w-full transform flex-col bg-[#152031] shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-transform duration-300 md:w-96">
+        <div class="absolute inset-y-0 right-0 z-[70] flex w-full transform flex-col bg-[#152031] shadow-[0_12px_40px_rgba(0,0,0,0.08)] transition-transform duration-300 md:w-[28rem]">
           <div class="flex items-center justify-between px-6 py-5 shrink-0">
             <div>
-              <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Profile</p>
-              <h2 class="text-2xl font-bold text-[#d8e3fb]">Account</h2>
+              <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Social profile</p>
+              <h2 class="text-2xl font-bold text-[#d8e3fb]">Account & presence</h2>
             </div>
             <button (click)="isProfileDrawerOpen = false" class="rounded-full bg-[#111c2d] p-2 text-[#859490] hover:text-[#d8e3fb]">
               <mat-icon>close</mat-icon>
@@ -117,20 +117,61 @@ import { FormsModule } from '@angular/forms';
           </div>
           
           <div class="flex-1 overflow-y-auto px-6 pb-6">
-            <div class="flex flex-col items-center mb-8">
-              <div class="mb-4 h-24 w-24 overflow-hidden rounded-full bg-[#111c2d] shadow-[inset_0_0_0_2px_rgba(79,219,200,0.22)]">
-                @if (authService.currentUser()?.photoURL) {
-                  <img [src]="authService.currentUser()?.photoURL" alt="Profile" class="w-full h-full object-cover" referrerpolicy="no-referrer">
-                } @else {
-                  <div class="flex h-full w-full items-center justify-center bg-[#1f2a3c] text-3xl font-medium text-[#4fdbc8]">
-                    {{ authService.userProfile()?.firstName?.charAt(0) || 'U' }}
-                  </div>
-                }
+            <div class="mb-8 rounded-[2rem] bg-[#111c2d] p-6">
+              <div class="flex items-center gap-4">
+                <div class="h-24 w-24 overflow-hidden rounded-full bg-[#081425] shadow-[inset_0_0_0_2px_rgba(79,219,200,0.22)]">
+                  @if (authService.currentUser()?.photoURL) {
+                    <img [src]="authService.currentUser()?.photoURL" alt="Profile" class="w-full h-full object-cover" referrerpolicy="no-referrer">
+                  } @else {
+                    <div class="flex h-full w-full items-center justify-center bg-[#1f2a3c] text-3xl font-medium text-[#4fdbc8]">
+                      {{ authService.userProfile()?.firstName?.charAt(0) || 'U' }}
+                    </div>
+                  }
+                </div>
+                <div class="min-w-0">
+                  <h3 class="truncate text-2xl font-bold text-[#d8e3fb]">{{ authService.userProfile()?.firstName }}</h3>
+                  <p class="truncate text-[#859490]">{{ authService.userProfile()?.email }}</p>
+                  <p class="mt-2 inline-flex rounded-full bg-[#081425] px-3 py-1 font-mono text-xs text-[#859490]">ID: {{ authService.userProfile()?.customId }}</p>
+                </div>
               </div>
-              <h3 class="text-2xl font-bold text-[#d8e3fb]">{{ authService.userProfile()?.firstName }}</h3>
-              <p class="text-[#859490]">{{ authService.userProfile()?.email }}</p>
-              <p class="mt-2 rounded-full bg-[#111c2d] px-3 py-1 font-mono text-xs text-[#859490]">ID: {{ authService.userProfile()?.customId }}</p>
-              <p class="mt-3 text-sm text-[#4fdbc8]">{{ authService.userProfile()?.country || 'No country set' }}</p>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-3">
+                <div class="rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                  <p class="text-[0.62rem] uppercase tracking-[0.18em] text-[#859490]">Experience</p>
+                  <p class="mt-2 text-sm font-semibold text-[#d8e3fb]">{{ authService.userProfile()?.pythonExperience || 'Learner' }}</p>
+                </div>
+                <div class="rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                  <p class="text-[0.62rem] uppercase tracking-[0.18em] text-[#859490]">Interests</p>
+                  <p class="mt-2 text-sm font-semibold text-[#d8e3fb]">{{ interestCount() }}</p>
+                </div>
+                <div class="rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                  <p class="text-[0.62rem] uppercase tracking-[0.18em] text-[#859490]">Status</p>
+                  <p class="mt-2 text-sm font-semibold text-[#4fdbc8]">{{ communityStatus() }}</p>
+                </div>
+              </div>
+
+              <div class="mt-5 rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                <p class="text-[0.62rem] uppercase tracking-[0.18em] text-[#859490]">Profile summary</p>
+                <p class="mt-2 text-sm leading-7 text-[#bbcac6]">
+                  {{ authService.userProfile()?.country || 'No country set' }} · {{ authService.userProfile()?.newsletterOptIn ? 'Open to updates and community announcements.' : 'Private profile with announcements muted.' }}
+                </p>
+              </div>
+            </div>
+
+            <div class="mb-6 space-y-4">
+              <div class="rounded-[1.75rem] bg-[#111c2d] p-5">
+                <p class="text-[0.66rem] uppercase tracking-[0.2em] text-[#859490]">Community presence</p>
+                <div class="mt-4 space-y-3">
+                  <div class="rounded-[1.1rem] bg-[#081425] px-4 py-3 text-sm text-[#bbcac6]">
+                    <span class="block text-[#d8e3fb]">Forum participation</span>
+                    <span class="mt-1 block leading-7">Use the redesigned community space to ask questions, share work, and document progress.</span>
+                  </div>
+                  <div class="rounded-[1.1rem] bg-[#081425] px-4 py-3 text-sm text-[#bbcac6]">
+                    <span class="block text-[#d8e3fb]">Learning identity</span>
+                    <span class="mt-1 block leading-7">Your profile settings shape lesson difficulty, recommendations, and the tone of AI guidance.</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <div class="space-y-4">
@@ -181,5 +222,13 @@ export class DashboardComponent {
     if (this.deleteEmailConfirm === this.authService.userProfile()?.email) {
       await this.authService.deleteAccount();
     }
+  }
+
+  interestCount(): number {
+    return this.authService.userProfile()?.projectInterests?.length || 0;
+  }
+
+  communityStatus(): string {
+    return this.authService.userProfile()?.newsletterOptIn ? 'Connected' : 'Private';
   }
 }
