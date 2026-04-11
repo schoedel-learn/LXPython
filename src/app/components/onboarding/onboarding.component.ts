@@ -56,154 +56,217 @@ const DAYS = Array.from({length: 31}, (_, i) => (i + 1).toString().padStart(2, '
   standalone: true,
   imports: [ReactiveFormsModule, MatIconModule],
   template: `
-    <div class="min-h-[100dvh] bg-[#131314] text-[#e3e3e3] flex flex-col items-center justify-center p-2">
-      <div class="w-full max-w-md bg-[#1e1f20] border border-[#444746] rounded-xl overflow-hidden shadow-2xl flex flex-col max-h-[95dvh]">
-        
-        <div class="p-3 border-b border-[#444746] flex items-center justify-between shrink-0">
-          <div class="flex items-center gap-3">
-            <div class="w-8 h-8 bg-[#8ab4f8] rounded-lg flex items-center justify-center">
-              <mat-icon class="text-[#131314] h-5 w-5 text-xl">terminal</mat-icon>
+    <div class="min-h-[100dvh] bg-[#081425] px-4 py-6 text-[#d8e3fb] md:px-8">
+      <div class="mx-auto grid min-h-[calc(100dvh-3rem)] max-w-7xl gap-6 lg:grid-cols-[0.95fr_1.25fr]">
+        <section class="sanctuary-card flex flex-col justify-between rounded-[2rem] px-6 py-7 md:px-8 md:py-9">
+          <div>
+            <div class="flex items-start justify-between gap-4">
+              <div class="flex items-center gap-4">
+                <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1f2a3c] text-[#4fdbc8]">
+                  <mat-icon>terminal</mat-icon>
+                </div>
+                <div>
+                  <p class="text-[0.68rem] uppercase tracking-[0.28em] text-[#859490]">Onboarding</p>
+                  <h1 class="text-3xl font-bold">Set your learning rhythm</h1>
+                </div>
+              </div>
+              <button (click)="logout()" class="rounded-full bg-[#111c2d] p-3 text-[#859490] transition-colors hover:text-[#d8e3fb]" aria-label="Sign out">
+                <mat-icon>logout</mat-icon>
+              </button>
             </div>
-            <div>
-              <h1 class="text-lg font-bold font-sans tracking-tight leading-tight">Complete Registration</h1>
-              <p class="text-[10px] text-[#8e918f] font-mono">ID: {{ authService.userProfile()?.customId }}</p>
+
+            <p class="mt-8 max-w-lg text-base leading-8 text-[#bbcac6]">
+              The workspace adapts to your level, interests, and pace. This profile helps LXPython shape lessons, community prompts, and practice loops around how you learn best.
+            </p>
+
+            <div class="mt-10 space-y-4">
+              <div class="rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+                <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Step 01</p>
+                <div class="mt-2 flex items-center justify-between">
+                  <span class="text-lg font-semibold">Verify identity</span>
+                  <span class="rounded-full bg-[#1f2a3c] px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em]" [class.text-[#a0d0c6]]="isEmailVerified()" [class.text-[#ffb4ab]]="!isEmailVerified()">
+                    {{ isEmailVerified() ? 'Complete' : 'Pending' }}
+                  </span>
+                </div>
+              </div>
+              <div class="rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+                <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Step 02</p>
+                <div class="mt-2 flex items-center justify-between">
+                  <span class="text-lg font-semibold">Profile tuning</span>
+                  <span class="rounded-full bg-[#1f2a3c] px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-[#4fdbc8]">Adaptive</span>
+                </div>
+              </div>
+              <div class="rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+                <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Workspace ID</p>
+                <p class="mt-2 font-mono text-sm text-[#d8e3fb]">{{ authService.userProfile()?.customId }}</p>
+              </div>
             </div>
           </div>
-          <button (click)="logout()" class="text-[#8e918f] hover:text-[#e3e3e3] p-1.5 rounded-md hover:bg-[#444746] transition-colors" aria-label="Sign out">
-            <mat-icon class="h-5 w-5 text-[20px]">logout</mat-icon>
-          </button>
-        </div>
 
-        <div class="p-4 overflow-y-auto flex-1">
+          <div class="mt-8 rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+            <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">What changes</p>
+            <ul class="mt-3 space-y-3 text-sm leading-7 text-[#bbcac6]">
+              <li>• Lesson difficulty and pacing</li>
+              <li>• Suggested project tracks</li>
+              <li>• Community prompts and support</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="sanctuary-card flex min-h-0 flex-col rounded-[2rem] px-6 py-7 md:px-8 md:py-9">
           @if (!isEmailVerified()) {
-            <div class="bg-[#f28b82]/10 border border-[#f28b82]/30 rounded-xl p-4 text-center">
-              <mat-icon class="text-[#f28b82] h-8 w-8 mb-2 text-3xl">mark_email_unread</mat-icon>
-              <h3 class="text-base font-bold text-[#f28b82] mb-1">Verify Your Email</h3>
-              <p class="text-xs text-[#e3e3e3] mb-4">
-                We need to verify {{ authService.currentUser()?.email }} before you can continue.
+            <div class="mx-auto flex max-w-xl flex-1 flex-col items-center justify-center text-center">
+              <div class="flex h-20 w-20 items-center justify-center rounded-full bg-[#ffb4ab]/12 text-[#ffb4ab]">
+                <mat-icon class="h-10 w-10 text-[40px]">mark_email_unread</mat-icon>
+              </div>
+              <p class="mt-8 text-[0.72rem] uppercase tracking-[0.32em] text-[#859490]">Verification required</p>
+              <h2 class="mt-3 text-4xl font-bold">Confirm your email before entering the studio.</h2>
+              <p class="mt-5 text-base leading-8 text-[#bbcac6]">
+                We sent access to <span class="text-[#d8e3fb]">{{ authService.currentUser()?.email }}</span>. Confirm it, then return here to finish shaping your workspace.
               </p>
-              <div class="flex flex-col gap-2">
+              <div class="mt-8 flex w-full max-w-sm flex-col gap-3">
                 <button (click)="sendVerification()" [disabled]="verificationSent()"
-                  class="bg-[#282a2c] hover:bg-[#444746] text-[#e3e3e3] text-sm font-medium py-2 px-4 rounded-lg transition-colors disabled:opacity-50">
-                  {{ verificationSent() ? 'Email Sent!' : 'Send Verification Email' }}
+                  class="rounded-[1.25rem] bg-[#111c2d] px-5 py-4 text-sm font-medium text-[#d8e3fb] transition-colors hover:bg-[#1f2a3c] disabled:opacity-50">
+                  {{ verificationSent() ? 'Verification email sent' : 'Send verification email' }}
                 </button>
                 <button (click)="checkVerification()"
-                  class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] text-sm font-medium py-2 px-4 rounded-lg transition-colors">
-                  I've Verified It
+                  class="sanctuary-button rounded-[1.25rem] px-5 py-4 text-sm font-semibold">
+                  I have verified my email
                 </button>
               </div>
             </div>
           } @else {
-            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-3">
-              
-              <!-- Row 1: Name & Email -->
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label for="firstName" class="block text-[11px] font-medium text-[#8e918f] mb-1">First Name</label>
-                  <input type="text" id="firstName" formControlName="firstName"
-                    class="w-full bg-[#131314] border border-[#444746] rounded-md px-2 py-1.5 text-xs text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8]">
-                </div>
-                <div>
-                  <label for="email" class="block text-[11px] font-medium text-[#8e918f] mb-1">Email</label>
-                  <input type="email" id="email" [value]="authService.currentUser()?.email" disabled
-                    class="w-full bg-[#131314]/50 border border-[#444746]/50 rounded-md px-2 py-1.5 text-xs text-[#8e918f] cursor-not-allowed">
-                </div>
-              </div>
-
-              <!-- Row 2: Country & Birthday -->
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label for="country" class="block text-[11px] font-medium text-[#8e918f] mb-1">Country</label>
-                  <select id="country" formControlName="country"
-                    class="w-full bg-[#131314] border border-[#444746] rounded-md px-2 py-1.5 text-xs text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] appearance-none">
-                    @for (country of countries; track country) {
-                      <option [value]="country">{{ country }}</option>
-                    }
-                  </select>
-                </div>
-                <div>
-                  <div class="block text-[11px] font-medium text-[#8e918f] mb-1">Birthday (Optional)</div>
-                  <div class="flex gap-2">
-                    <select formControlName="birthMonth" aria-label="Birth Month" class="w-full bg-[#131314] border border-[#444746] rounded-md px-2 py-1.5 text-xs text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] appearance-none">
-                      <option value="">MM</option>
-                      @for (m of months; track m) { <option [value]="m">{{ m }}</option> }
-                    </select>
-                    <select formControlName="birthDay" aria-label="Birth Day" class="w-full bg-[#131314] border border-[#444746] rounded-md px-2 py-1.5 text-xs text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] appearance-none">
-                      <option value="">DD</option>
-                      @for (d of days; track d) { <option [value]="d">{{ d }}</option> }
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Row 3: Experience -->
+            <div class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
               <div>
-                <div id="pythonExperienceLabel" class="block text-[11px] font-medium text-[#8e918f] mb-1">Python Experience</div>
-                <div class="flex gap-1.5" aria-labelledby="pythonExperienceLabel">
-                  @for (level of ['Beginner', 'Intermediate', 'Advanced', 'Expert']; track level) {
-                    <label [for]="'exp-' + level" class="flex-1 text-center p-1.5 rounded-md border cursor-pointer transition-colors"
-                      [class.border-[#8ab4f8]]="profileForm.get('pythonExperience')?.value === level"
-                      [class.bg-[#8ab4f8]/10]="profileForm.get('pythonExperience')?.value === level"
-                      [class.border-[#444746]]="profileForm.get('pythonExperience')?.value !== level"
-                      [class.bg-[#131314]]="profileForm.get('pythonExperience')?.value !== level">
-                      <input type="radio" [id]="'exp-' + level" formControlName="pythonExperience" [value]="level" class="hidden">
-                      <span class="text-[10px] font-medium" [class.text-[#8ab4f8]]="profileForm.get('pythonExperience')?.value === level">{{ level }}</span>
-                    </label>
-                  }
-                </div>
+                <p class="text-[0.72rem] uppercase tracking-[0.32em] text-[#859490]">Profile tuning</p>
+                <h2 class="mt-2 text-4xl font-bold">Tell us how you want to learn.</h2>
               </div>
+              <div class="rounded-[1.25rem] bg-[#111c2d] px-4 py-3 text-sm text-[#bbcac6]">
+                Editing for <span class="text-[#d8e3fb]">{{ authService.currentUser()?.email }}</span>
+              </div>
+            </div>
 
-              <!-- Row 4: Interests (Multi-select) -->
-              <div class="relative">
-                <div id="projectInterestsLabel" class="block text-[11px] font-medium text-[#8e918f] mb-1">Project Interests (Optional)</div>
-                <button type="button" (click)="isInterestsOpen.set(!isInterestsOpen())" aria-labelledby="projectInterestsLabel"
-                  class="w-full bg-[#131314] border border-[#444746] rounded-md px-2 py-1.5 text-xs text-left flex items-center justify-between focus:outline-none focus:border-[#8ab4f8]">
-                  <span class="truncate text-[#e3e3e3]">
-                    {{ selectedInterests().length ? selectedInterests().join(', ') : 'Select interests...' }}
-                  </span>
-                  <mat-icon class="text-[16px] h-4 w-4 text-[#8e918f]">expand_more</mat-icon>
-                </button>
-                
-                @if (isInterestsOpen()) {
-                  <div class="absolute z-10 w-full mt-1 bg-[#282a2c] border border-[#444746] rounded-md shadow-xl max-h-32 overflow-y-auto">
-                    @for (interest of projectInterestsList; track interest) {
-                      <label [for]="'interest-' + interest" class="flex items-center gap-2 px-3 py-1.5 hover:bg-[#444746] cursor-pointer">
-                        <input type="checkbox" [id]="'interest-' + interest" [checked]="selectedInterests().includes(interest)" (change)="toggleInterest(interest)"
-                          class="w-3 h-3 rounded border-[#444746] bg-[#131314] text-[#8ab4f8]">
-                        <span class="text-xs text-[#e3e3e3]">{{ interest }}</span>
+            <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto pr-1">
+              <div class="grid gap-8 xl:grid-cols-[1fr_0.85fr]">
+                <div class="space-y-6">
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Identity</p>
+                    <div class="mt-4 grid gap-4 md:grid-cols-2">
+                      <label class="block">
+                        <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">First name</span>
+                        <input type="text" id="firstName" formControlName="firstName" class="sanctuary-input w-full px-4 py-3 text-sm focus:outline-none">
                       </label>
+                      <label class="block">
+                        <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Email</span>
+                        <input type="email" id="email" [value]="authService.currentUser()?.email" disabled class="sanctuary-input w-full cursor-not-allowed px-4 py-3 text-sm opacity-70">
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Location & birthday</p>
+                    <div class="mt-4 grid gap-4 md:grid-cols-[1fr_0.8fr]">
+                      <label class="block">
+                        <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Country</span>
+                        <select id="country" formControlName="country" class="sanctuary-input w-full appearance-none px-4 py-3 text-sm focus:outline-none">
+                          @for (country of countries; track country) {
+                            <option [value]="country">{{ country }}</option>
+                          }
+                        </select>
+                      </label>
+                      <div>
+                        <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Birthday</span>
+                        <div class="grid grid-cols-2 gap-3">
+                          <select formControlName="birthMonth" aria-label="Birth Month" class="sanctuary-input w-full appearance-none px-4 py-3 text-sm focus:outline-none">
+                            <option value="">Month</option>
+                            @for (m of months; track m) { <option [value]="m">{{ m }}</option> }
+                          </select>
+                          <select formControlName="birthDay" aria-label="Birth Day" class="sanctuary-input w-full appearance-none px-4 py-3 text-sm focus:outline-none">
+                            <option value="">Day</option>
+                            @for (d of days; track d) { <option [value]="d">{{ d }}</option> }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p id="pythonExperienceLabel" class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Python confidence</p>
+                    <div class="mt-4 grid gap-3 md:grid-cols-2" aria-labelledby="pythonExperienceLabel">
+                      @for (level of ['Beginner', 'Intermediate', 'Advanced', 'Expert']; track level) {
+                        <label [for]="'exp-' + level" class="cursor-pointer rounded-[1.25rem] p-4 transition-colors"
+                          [class.bg-[#1f2a3c]]="profileForm.get('pythonExperience')?.value === level"
+                          [class.text-[#d8e3fb]]="profileForm.get('pythonExperience')?.value === level"
+                          [class.bg-[#081425]]="profileForm.get('pythonExperience')?.value !== level"
+                          [class.text-[#bbcac6]]="profileForm.get('pythonExperience')?.value !== level">
+                          <input type="radio" [id]="'exp-' + level" formControlName="pythonExperience" [value]="level" class="hidden">
+                          <div class="flex items-center justify-between">
+                            <span class="text-base font-semibold">{{ level }}</span>
+                            @if (profileForm.get('pythonExperience')?.value === level) {
+                              <mat-icon class="text-[#4fdbc8]">check_circle</mat-icon>
+                            }
+                          </div>
+                          <p class="mt-2 text-sm leading-7 text-[#859490]">
+                            {{ level === 'Beginner' ? 'Need guided practice and slower pacing.' : level === 'Intermediate' ? 'Comfortable with syntax and ready for deeper problems.' : level === 'Advanced' ? 'Want faster projects and fewer hand-holding steps.' : 'Prefer challenge-focused prompts and open-ended work.' }}
+                          </p>
+                        </label>
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-6">
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p id="projectInterestsLabel" class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Project interests</p>
+                    <button type="button" (click)="isInterestsOpen.set(!isInterestsOpen())" aria-labelledby="projectInterestsLabel"
+                      class="mt-4 flex w-full items-center justify-between rounded-[1.25rem] bg-[#081425] px-4 py-3 text-left text-sm text-[#d8e3fb]">
+                      <span class="truncate">{{ selectedInterests().length ? selectedInterests().join(', ') : 'Select focus areas for future projects' }}</span>
+                      <mat-icon class="text-[#859490]">expand_more</mat-icon>
+                    </button>
+                    @if (isInterestsOpen()) {
+                      <div class="mt-4 grid max-h-72 gap-2 overflow-y-auto rounded-[1.25rem] bg-[#081425] p-3">
+                        @for (interest of projectInterestsList; track interest) {
+                          <label [for]="'interest-' + interest" class="flex cursor-pointer items-center justify-between rounded-xl px-3 py-3 transition-colors hover:bg-[#1f2a3c]">
+                            <span class="text-sm text-[#d8e3fb]">{{ interest }}</span>
+                            <input type="checkbox" [id]="'interest-' + interest" [checked]="selectedInterests().includes(interest)" (change)="toggleInterest(interest)"
+                              class="h-4 w-4 rounded border-[#3c4947] bg-[#081425] text-[#4fdbc8]">
+                          </label>
+                        }
+                      </div>
                     }
                   </div>
-                }
-              </div>
 
-              <!-- Row 5: Newsletter -->
-              <div class="bg-[#282a2c] rounded-md p-2 border border-[#444746]">
-                <label for="newsletterOptIn" class="flex items-start gap-2 cursor-pointer">
-                  <div class="mt-0.5">
-                    <input type="checkbox" id="newsletterOptIn" formControlName="newsletterOptIn"
-                      class="w-3.5 h-3.5 rounded border-[#444746] bg-[#131314] text-[#8ab4f8] focus:ring-[#8ab4f8] focus:ring-offset-[#131314]">
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Updates</p>
+                    <label for="newsletterOptIn" class="mt-4 flex cursor-pointer gap-3 rounded-[1.25rem] bg-[#081425] p-4">
+                      <input type="checkbox" id="newsletterOptIn" formControlName="newsletterOptIn"
+                        class="mt-1 h-4 w-4 rounded border-[#3c4947] bg-[#081425] text-[#4fdbc8] focus:ring-[#4fdbc8] focus:ring-offset-[#081425]">
+                      <div>
+                        <span class="block text-sm font-semibold text-[#d8e3fb]">Opt in to LXPython communications</span>
+                        <span class="mt-2 block text-sm leading-7 text-[#859490]">Receive occasional updates, workflow improvements, and launch notes. Email confirmation is still required.</span>
+                      </div>
+                    </label>
                   </div>
-                  <div>
-                    <span class="block text-xs font-medium text-[#e3e3e3]">Opt-in to LXPython Communications</span>
-                    <span class="block text-[10px] text-[#8e918f] leading-tight mt-0.5">
-                      Receive infrequent updates. Requires email confirmation.
-                    </span>
-                  </div>
-                </label>
-              </div>
 
-              <button type="submit" [disabled]="profileForm.invalid || isSaving()"
-                class="w-full bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] font-bold py-2 px-4 rounded-md text-sm transition-colors disabled:opacity-50 flex items-center justify-center gap-1 mt-1">
-                @if (isSaving()) {
-                  <mat-icon class="animate-spin h-4 w-4 text-[16px]">autorenew</mat-icon> Saving...
-                } @else {
-                  Complete Registration <mat-icon class="h-4 w-4 text-[16px]">arrow_forward</mat-icon>
-                }
-              </button>
+                  <div class="rounded-[1.5rem] bg-[#111c2d] p-5">
+                    <p class="text-[0.68rem] uppercase tracking-[0.26em] text-[#859490]">Ready</p>
+                    <p class="mt-3 text-sm leading-7 text-[#bbcac6]">
+                      Once saved, you’ll move directly into the redesigned learning workspace with these preferences applied.
+                    </p>
+                    <button type="submit" [disabled]="profileForm.invalid || isSaving()"
+                      class="sanctuary-button mt-6 flex w-full items-center justify-center gap-2 rounded-[1.4rem] px-5 py-4 text-sm font-semibold disabled:opacity-50">
+                      @if (isSaving()) {
+                        <mat-icon class="h-4 w-4 animate-spin text-[16px]">autorenew</mat-icon> Saving your workspace
+                      } @else {
+                        Complete registration <mat-icon class="h-4 w-4 text-[16px]">arrow_forward</mat-icon>
+                      }
+                    </button>
+                  </div>
+                </div>
+              </div>
             </form>
           }
-        </div>
+        </section>
       </div>
     </div>
   `

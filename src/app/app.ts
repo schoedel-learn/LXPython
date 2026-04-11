@@ -8,8 +8,11 @@ import { AuthService } from './services/auth.service';
   imports: [RouterOutlet],
   template: `
     @if (!authService.isAuthReady()) {
-      <div class="min-h-screen flex items-center justify-center bg-[#131314]">
-        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#8ab4f8]"></div>
+      <div class="flex min-h-screen items-center justify-center bg-[#081425]">
+        <div class="flex flex-col items-center gap-4 rounded-[1.5rem] bg-[#152031] px-8 py-7 text-[#d8e3fb] shadow-[0_24px_60px_rgba(0,0,0,0.18)]">
+          <div class="h-12 w-12 animate-spin rounded-full border-y-2 border-[#4fdbc8] border-x-2 border-x-transparent"></div>
+          <p class="text-sm uppercase tracking-[0.24em] text-[#859490]">Preparing your workspace</p>
+        </div>
       </div>
     } @else {
       <router-outlet></router-outlet>

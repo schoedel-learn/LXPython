@@ -1,48 +1,113 @@
-/* You can add global styles to this file, and also import other style files */
-@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Lexend", "Avenir Next", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", ui-monospace, monospace;
+  --font-headline: "Space Grotesk", "Avenir Next Condensed", var(--font-sans);
 
-  --color-bg-base: #131314;
-  --color-bg-surface: #1e1f20;
-  --color-bg-surface-hover: #282a2c;
+  --color-bg-base: #081425;
+  --color-bg-surface: #152031;
+  --color-bg-surface-hover: #1f2a3c;
+  --color-bg-panel: #111c2d;
+  --color-bg-editor: #040e1f;
   
-  --color-text-primary: #e3e3e3;
-  --color-text-secondary: #c4c7c5;
-  --color-text-tertiary: #8e918f;
+  --color-text-primary: #d8e3fb;
+  --color-text-secondary: #bbcac6;
+  --color-text-tertiary: #859490;
   
-  --color-accent-blue: #8ab4f8;
-  --color-accent-blue-hover: #aecbfa;
-  --color-accent-green: #81c995;
-  --color-accent-red: #f28b82;
+  --color-accent-blue: #4fdbc8;
+  --color-accent-blue-hover: #71f8e4;
+  --color-accent-green: #a0d0c6;
+  --color-accent-red: #ffb4ab;
   
-  --color-border: #444746;
+  --color-border: rgba(133, 148, 144, 0.15);
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {
-  background-color: var(--color-bg-base);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(79, 219, 200, 0.12), transparent 32%),
+    linear-gradient(180deg, #0b1729 0%, var(--color-bg-base) 40%, #040e1f 100%);
   color: var(--color-text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
 }
 
-/* Custom scrollbar for dark theme */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-headline);
+  letter-spacing: -0.03em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(79, 219, 200, 0.28);
+  color: var(--color-text-primary);
+}
+
+.ghost-outline {
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.sanctuary-card {
+  background: color-mix(in srgb, var(--color-bg-surface) 92%, transparent);
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.sanctuary-button {
+  background-image: linear-gradient(135deg, var(--color-accent-blue), #14b8a6);
+  color: #003731;
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.1),
+    0 18px 36px rgba(20, 184, 166, 0.12);
+}
+
+.sanctuary-button:hover {
+  filter: brightness(1.04);
+}
+
+.sanctuary-input {
+  background: rgba(4, 14, 31, 0.78);
+  color: var(--color-text-primary);
+  border-radius: 1rem;
+  box-shadow: inset 0 0 0 1px var(--color-border);
+}
+
+.sanctuary-muted {
+  color: var(--color-text-tertiary);
+}
+
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--color-bg-base);
+  background: rgba(4, 14, 31, 0.72);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
+  background: rgba(133, 148, 144, 0.4);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-tertiary);
+  background: rgba(187, 202, 198, 0.5);
 }
