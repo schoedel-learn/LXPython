@@ -33,122 +33,164 @@ const COUNTRIES = [
   standalone: true,
   imports: [MatIconModule, ReactiveFormsModule],
   template: `
-    <div class="h-full overflow-y-auto p-6">
-      <div class="max-w-2xl mx-auto">
-        <div class="flex items-center justify-between mb-8">
-          <h2 class="text-2xl font-bold text-[#d8e3fb]">Your Profile</h2>
-          <div class="text-sm font-mono text-[#859490] bg-[#152031] px-3 py-1 rounded-lg border border-[#3c4947]">
-            ID: {{ authService.userProfile()?.customId }}
+    <div class="h-full overflow-y-auto bg-[#081425] px-4 py-6 md:px-8">
+      <div class="mx-auto max-w-7xl space-y-6 text-[#d8e3fb]">
+        <section class="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
+          <div class="sanctuary-card rounded-[2rem] px-6 py-7 md:px-8 md:py-9">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <p class="text-[0.72rem] uppercase tracking-[0.3em] text-[#859490]">Profile studio</p>
+                <h1 class="mt-3 text-4xl font-bold">Your learning identity</h1>
+              </div>
+              <div class="rounded-full bg-[#111c2d] px-4 py-2 font-mono text-xs text-[#859490]">
+                {{ authService.userProfile()?.customId }}
+              </div>
+            </div>
+
+            <div class="mt-8 rounded-[1.8rem] bg-[#111c2d] p-6">
+              <div class="flex items-center gap-4">
+                <div class="flex h-16 w-16 items-center justify-center rounded-full bg-[#1f2a3c] text-2xl font-semibold text-[#4fdbc8]">
+                  {{ authService.userProfile()?.firstName?.charAt(0) || 'U' }}
+                </div>
+                <div>
+                  <h2 class="text-2xl font-bold">{{ profileForm.get('firstName')?.value || 'Learner' }}</h2>
+                  <p class="mt-1 text-sm text-[#859490]">{{ profileForm.get('email')?.value }}</p>
+                </div>
+              </div>
+
+              <div class="mt-6 grid gap-3 sm:grid-cols-2">
+                <div class="rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                  <p class="text-xs uppercase tracking-[0.18em] text-[#859490]">Experience</p>
+                  <p class="mt-2 text-lg font-semibold">{{ profileForm.get('pythonExperience')?.value }}</p>
+                </div>
+                <div class="rounded-[1.25rem] bg-[#081425] px-4 py-4">
+                  <p class="text-xs uppercase tracking-[0.18em] text-[#859490]">Location</p>
+                  <p class="mt-2 text-lg font-semibold">{{ profileForm.get('country')?.value || 'Not set' }}</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-6 space-y-4">
+              <div class="rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+                <p class="text-xs uppercase tracking-[0.18em] text-[#859490]">What this influences</p>
+                <ul class="mt-3 space-y-2 text-sm leading-7 text-[#bbcac6]">
+                  <li>• Lesson complexity and pace</li>
+                  <li>• Project recommendations</li>
+                  <li>• Community prompts and guidance</li>
+                </ul>
+              </div>
+              <div class="rounded-[1.5rem] bg-[#111c2d] px-5 py-4">
+                <p class="text-xs uppercase tracking-[0.18em] text-[#859490]">Selected interests</p>
+                <p class="mt-3 text-sm leading-7 text-[#bbcac6]">
+                  {{ selectedInterests.length ? selectedInterests.join(', ') : 'No project interests selected yet.' }}
+                </p>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6 bg-[#152031] p-6 rounded-2xl border border-[#3c4947]">
-          
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="sanctuary-card space-y-6 rounded-[2rem] px-6 py-7 md:px-8 md:py-9">
             <div>
-              <label for="firstName" class="block text-sm font-medium text-[#bbcac6] mb-2">First Name</label>
-              <input type="text" id="firstName" formControlName="firstName" 
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
-            </div>
-            
-            <div>
-              <label for="email" class="block text-sm font-medium text-[#bbcac6] mb-2">Email</label>
-              <input type="email" id="email" formControlName="email" readonly
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#859490] cursor-not-allowed opacity-70">
+              <p class="text-[0.72rem] uppercase tracking-[0.3em] text-[#859490]">Edit details</p>
+              <h2 class="mt-2 text-3xl font-bold">Refine your workspace settings</h2>
             </div>
 
-            <div>
-              <label for="phoneNumber" class="block text-sm font-medium text-[#bbcac6] mb-2">Phone Number</label>
-              <input type="tel" id="phoneNumber" formControlName="phoneNumber" 
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
+            <div class="grid gap-5 md:grid-cols-2">
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">First name</span>
+                <input type="text" id="firstName" formControlName="firstName" class="sanctuary-input w-full px-4 py-3 text-sm focus:outline-none">
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Email</span>
+                <input type="email" id="email" formControlName="email" readonly class="sanctuary-input w-full cursor-not-allowed px-4 py-3 text-sm opacity-70">
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Phone number</span>
+                <input type="tel" id="phoneNumber" formControlName="phoneNumber" class="sanctuary-input w-full px-4 py-3 text-sm focus:outline-none">
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Country</span>
+                <select id="country" formControlName="country" class="sanctuary-input w-full appearance-none px-4 py-3 text-sm focus:outline-none">
+                  <option value="">Select a country</option>
+                  @for (country of countries; track country) {
+                    <option [value]="country">{{ country }}</option>
+                  }
+                </select>
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Birthday</span>
+                <input type="text" id="birthday" formControlName="birthday" placeholder="01/25" class="sanctuary-input w-full px-4 py-3 text-sm focus:outline-none">
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-xs uppercase tracking-[0.18em] text-[#859490]">Python experience</span>
+                <select id="pythonExperience" formControlName="pythonExperience" class="sanctuary-input w-full appearance-none px-4 py-3 text-sm focus:outline-none">
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                  <option value="Expert">Expert</option>
+                </select>
+              </label>
             </div>
 
-            <div>
-              <label for="country" class="block text-sm font-medium text-[#bbcac6] mb-2">Country</label>
-              <select id="country" formControlName="country" 
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors appearance-none">
-                <option value="">Select a country</option>
-                @for (country of countries; track country) {
-                  <option [value]="country">{{ country }}</option>
+            <div class="rounded-[1.6rem] bg-[#111c2d] p-5">
+              <p class="text-xs uppercase tracking-[0.18em] text-[#859490]">Project interests</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                @for (interest of availableInterests; track interest) {
+                  <button type="button"
+                    (click)="toggleInterest(interest)"
+                    [class.bg-[#4fdbc8]]="hasInterest(interest)"
+                    [class.text-[#081425]]="hasInterest(interest)"
+                    [class.bg-[#081425]]="!hasInterest(interest)"
+                    [class.text-[#bbcac6]]="!hasInterest(interest)"
+                    class="rounded-full px-4 py-2 text-sm font-medium transition-colors">
+                    {{ interest }}
+                  </button>
                 }
-              </select>
+              </div>
             </div>
 
-            <div>
-              <label for="birthday" class="block text-sm font-medium text-[#bbcac6] mb-2">Birthday (MM/DD)</label>
-              <input type="text" id="birthday" formControlName="birthday" placeholder="01/25"
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
-            </div>
-
-            <div>
-              <label for="pythonExperience" class="block text-sm font-medium text-[#bbcac6] mb-2">Python Experience</label>
-              <select id="pythonExperience" formControlName="pythonExperience" 
-                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors appearance-none">
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Advanced">Advanced</option>
-                <option value="Expert">Expert</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <div class="block text-sm font-medium text-[#bbcac6] mb-2">Project Interests</div>
-            <div class="flex flex-wrap gap-2">
-              @for (interest of availableInterests; track interest) {
-                <button type="button" 
-                  (click)="toggleInterest(interest)"
-                  [class]="hasInterest(interest) ? 'bg-[#4fdbc8] text-[#081425] border-[#4fdbc8]' : 'bg-[#081425] text-[#bbcac6] border-[#3c4947] hover:border-[#4fdbc8]'"
-                  class="px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200">
-                  {{ interest }}
-                </button>
-              }
-            </div>
-          </div>
-
-          <!-- Newsletter Opt-in -->
-          <div class="bg-[#1f2a3c] rounded-xl p-4 border border-[#3c4947]">
-            <label class="flex items-start gap-3 cursor-pointer">
-              <div class="mt-1">
+            <div class="rounded-[1.6rem] bg-[#111c2d] p-5">
+              <label class="flex items-start gap-3">
                 <input type="checkbox" formControlName="newsletterOptIn"
-                  class="w-5 h-5 rounded border-[#3c4947] bg-[#081425] text-[#4fdbc8] focus:ring-[#4fdbc8] focus:ring-offset-[#081425]">
-              </div>
-              <div class="flex-1">
-                <span class="block font-medium text-[#d8e3fb]">Opt-in to LXPython Communications</span>
-                <span class="block text-sm text-[#859490] mt-1">
-                  Receive infrequent updates, tips, and news.
-                </span>
-              </div>
-            </label>
-            
-            @if (profileForm.get('newsletterOptIn')?.value && !authService.userProfile()?.newsletterConfirmed && authService.userProfile()?.email !== 'schoedelb@gmail.com') {
-              <div class="mt-4 ml-8 p-3 bg-[#4fdbc8]/10 border border-[#4fdbc8]/30 rounded-lg flex items-center justify-between">
-                <span class="text-sm text-[#4fdbc8]">Please confirm your subscription.</span>
-                <button type="button" (click)="confirmNewsletter()"
-                  class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] text-xs font-bold py-1.5 px-3 rounded-md transition-colors">
-                  Simulate Confirmation
-                </button>
-              </div>
-            } @else if (profileForm.get('newsletterOptIn')?.value && authService.userProfile()?.newsletterConfirmed) {
-              <div class="mt-4 ml-8 flex items-center gap-2 text-sm text-[#a0d0c6]">
-                <mat-icon class="h-4 w-4 text-[16px]">check_circle</mat-icon> Subscription Confirmed
-              </div>
-            }
-          </div>
+                  class="mt-1 h-5 w-5 rounded border-[#3c4947] bg-[#081425] text-[#4fdbc8] focus:ring-[#4fdbc8] focus:ring-offset-[#081425]">
+                <div class="flex-1">
+                  <span class="block font-medium text-[#d8e3fb]">Opt in to LXPython communications</span>
+                  <span class="mt-2 block text-sm leading-7 text-[#859490]">Receive infrequent updates, tips, and product notes.</span>
+                </div>
+              </label>
 
-          <div class="pt-4 flex justify-end">
-            <button type="submit" [disabled]="profileForm.invalid || isSaving"
-              class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] font-medium py-2.5 px-6 rounded-xl transition-colors duration-200 disabled:opacity-50 flex items-center gap-2">
-              @if (isSaving) {
-                <mat-icon class="animate-spin h-5 w-5">refresh</mat-icon>
-                Saving...
-              } @else {
-                <mat-icon class="h-5 w-5">save</mat-icon>
-                Save Profile
+              @if (profileForm.get('newsletterOptIn')?.value && !authService.userProfile()?.newsletterConfirmed && authService.userProfile()?.email !== 'schoedelb@gmail.com') {
+                <div class="mt-4 flex flex-col gap-3 rounded-[1.25rem] bg-[#081425] p-4 md:flex-row md:items-center md:justify-between">
+                  <span class="text-sm text-[#4fdbc8]">Your subscription still needs confirmation.</span>
+                  <button type="button" (click)="confirmNewsletter()" class="sanctuary-button rounded-[1rem] px-4 py-2 text-xs font-semibold">
+                    Simulate confirmation
+                  </button>
+                </div>
+              } @else if (profileForm.get('newsletterOptIn')?.value && authService.userProfile()?.newsletterConfirmed) {
+                <div class="mt-4 flex items-center gap-2 text-sm text-[#a0d0c6]">
+                  <mat-icon class="h-4 w-4 text-[16px]">check_circle</mat-icon> Subscription confirmed
+                </div>
               }
-            </button>
-          </div>
-        </form>
+            </div>
+
+            <div class="flex justify-end pt-2">
+              <button type="submit" [disabled]="profileForm.invalid || isSaving"
+                class="sanctuary-button flex items-center gap-2 rounded-[1.4rem] px-6 py-4 text-sm font-semibold disabled:opacity-50">
+                @if (isSaving) {
+                  <mat-icon class="h-5 w-5 animate-spin">refresh</mat-icon>
+                  Saving profile
+                } @else {
+                  <mat-icon class="h-5 w-5">save</mat-icon>
+                  Save profile
+                }
+              </button>
+            </div>
+          </form>
+        </section>
       </div>
     </div>
   `

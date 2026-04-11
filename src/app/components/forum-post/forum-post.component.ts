@@ -11,88 +11,110 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule, RouterModule],
   template: `
-    <div class="h-full w-full flex flex-col bg-[#081425] text-[#d8e3fb] overflow-y-auto p-4 md:p-8">
-      <div class="max-w-4xl mx-auto w-full">
-        
-        <button routerLink="/dashboard/forum" class="flex items-center gap-2 text-[#4fdbc8] hover:text-[#71f8e4] transition-colors mb-6 text-sm font-medium">
-          <mat-icon class="text-[18px] h-[18px] w-[18px]">arrow_back</mat-icon> Back to Forum
+    <div class="h-full w-full overflow-y-auto bg-[#081425] px-4 py-6 text-[#d8e3fb] md:px-8">
+      <div class="mx-auto max-w-7xl space-y-6">
+        <button routerLink="/dashboard/forum" class="inline-flex items-center gap-2 rounded-full bg-[#152031] px-4 py-2 text-sm font-medium text-[#4fdbc8] transition-colors hover:bg-[#1f2a3c]">
+          <mat-icon class="h-[18px] w-[18px] text-[18px]">arrow_back</mat-icon> Back to forum
         </button>
 
         @if (isLoading()) {
-          <div class="flex justify-center py-12">
-            <mat-icon class="animate-spin text-[#4fdbc8] text-4xl h-10 w-10">refresh</mat-icon>
+          <div class="sanctuary-card flex justify-center rounded-[2rem] py-16">
+            <mat-icon class="h-10 w-10 animate-spin text-[40px] text-[#4fdbc8]">refresh</mat-icon>
           </div>
         }
 
         @if (!isLoading() && !post()) {
-          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-12 text-center">
-            <mat-icon class="text-[#859490] text-5xl h-12 w-12 mb-4">error_outline</mat-icon>
-            <h3 class="text-lg font-medium text-[#d8e3fb] mb-2">Post not found</h3>
-            <p class="text-[#859490]">This post may have been deleted or doesn't exist.</p>
+          <div class="sanctuary-card rounded-[2rem] px-8 py-16 text-center">
+            <mat-icon class="h-12 w-12 text-[48px] text-[#859490]">error_outline</mat-icon>
+            <h3 class="mt-4 text-2xl font-semibold">Post not found</h3>
+            <p class="mt-3 text-sm leading-7 text-[#859490]">This discussion may have been removed or the link may no longer be valid.</p>
           </div>
         }
 
         @if (post(); as p) {
-          <!-- Original Post -->
-          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-6 mb-8 shadow-sm">
-            <div class="flex items-center gap-2 mb-4">
-              <span class="bg-[#1f2a3c] text-[#4fdbc8] border border-[#3c4947] px-2.5 py-1 rounded-full text-xs font-medium">
-                {{ p.tags[0] }}
-              </span>
-            </div>
-            <h1 class="text-2xl font-bold text-[#d8e3fb] mb-4">{{ p.title }}</h1>
-            <div class="flex items-center gap-4 text-sm text-[#859490] mb-6 pb-6 border-b border-[#3c4947]">
-              <span class="flex items-center gap-1 font-medium text-[#d8e3fb]">
-                <mat-icon class="text-[18px] h-[18px] w-[18px]">person</mat-icon> {{ p.authorName }}
-              </span>
-              <span class="flex items-center gap-1">
-                <mat-icon class="text-[18px] h-[18px] w-[18px]">schedule</mat-icon> {{ formatDate(p.createdAt) }}
-              </span>
-            </div>
-            <div class="prose prose-invert max-w-none">
-              <p class="whitespace-pre-wrap text-[#d8e3fb] leading-relaxed">{{ p.content }}</p>
-            </div>
-          </div>
-
-          <!-- Replies Section -->
-          <h3 class="text-lg font-bold text-[#d8e3fb] mb-6 flex items-center gap-2">
-            <mat-icon class="text-[#4fdbc8]">chat</mat-icon> Replies ({{ p.replyCount }})
-          </h3>
-
-          <div class="flex flex-col gap-4 mb-8">
-            @for (reply of replies(); track reply.id) {
-              <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-5 shadow-sm">
-                <div class="flex items-center justify-between mb-3">
-                  <span class="flex items-center gap-2 font-medium text-[#d8e3fb] text-sm">
-                    <div class="w-6 h-6 rounded-full bg-[#1f2a3c] flex items-center justify-center text-xs text-[#4fdbc8] border border-[#3c4947]">
-                      {{ reply.authorName.charAt(0).toUpperCase() }}
-                    </div>
-                    {{ reply.authorName }}
-                  </span>
-                  <span class="text-xs text-[#859490]">{{ formatDate(reply.createdAt) }}</span>
+          <div class="grid gap-6 xl:grid-cols-[1.15fr_0.85fr]">
+            <section class="space-y-6">
+              <article class="sanctuary-card rounded-[2rem] px-6 py-7 md:px-8 md:py-9">
+                <div class="flex flex-wrap items-center gap-3">
+                  <span class="rounded-full bg-[#1f2a3c] px-3 py-1 text-[0.68rem] uppercase tracking-[0.18em] text-[#4fdbc8]">{{ p.tags[0] }}</span>
+                  <span class="text-xs uppercase tracking-[0.18em] text-[#859490]">{{ formatDate(p.createdAt) }}</span>
                 </div>
-                <p class="whitespace-pre-wrap text-[#d8e3fb] text-sm leading-relaxed">{{ reply.content }}</p>
-              </div>
-            }
-          </div>
+                <h1 class="mt-5 max-w-3xl text-4xl font-bold leading-tight">{{ p.title }}</h1>
+                <div class="mt-6 flex flex-wrap items-center gap-4 text-sm text-[#bbcac6]">
+                  <div class="flex items-center gap-2 rounded-full bg-[#111c2d] px-4 py-2">
+                    <mat-icon class="h-4 w-4 text-[16px] text-[#4fdbc8]">person</mat-icon>
+                    {{ p.authorName }}
+                  </div>
+                  <div class="flex items-center gap-2 rounded-full bg-[#111c2d] px-4 py-2">
+                    <mat-icon class="h-4 w-4 text-[16px]">chat_bubble_outline</mat-icon>
+                    {{ p.replyCount }} replies
+                  </div>
+                </div>
+                <div class="mt-8 rounded-[1.6rem] bg-[#111c2d] p-5">
+                  <p class="whitespace-pre-wrap text-base leading-8 text-[#d8e3fb]">{{ p.content }}</p>
+                </div>
+              </article>
 
-          <!-- Add Reply Form -->
-          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-6 shadow-sm">
-            <h4 class="text-base font-bold text-[#d8e3fb] mb-4">Add a Reply</h4>
-            <textarea [(ngModel)]="newReplyContent" rows="4" placeholder="Write your response here..." aria-label="Reply content"
-              class="w-full bg-[#081425] border border-[#3c4947] rounded-lg px-4 py-3 text-sm text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors resize-y mb-4"></textarea>
-            <div class="flex justify-end">
-              <button (click)="submitReply()" [disabled]="!newReplyContent.trim() || isSubmitting()"
-                class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] text-sm font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
-                @if (isSubmitting()) {
-                  <mat-icon class="animate-spin h-4 w-4">refresh</mat-icon>
+              <section class="space-y-4">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <p class="text-[0.72rem] uppercase tracking-[0.3em] text-[#859490]">Conversation</p>
+                    <h2 class="mt-2 text-3xl font-bold">Replies</h2>
+                  </div>
+                  <div class="rounded-full bg-[#152031] px-4 py-2 text-sm text-[#bbcac6]">{{ replies().length }} messages</div>
+                </div>
+
+                @for (reply of replies(); track reply.id) {
+                  <article class="sanctuary-card rounded-[1.8rem] px-5 py-5 md:px-6">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                      <div class="flex items-center gap-3">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[#111c2d] text-sm font-semibold text-[#4fdbc8]">
+                          {{ reply.authorName.charAt(0).toUpperCase() }}
+                        </div>
+                        <div>
+                          <p class="font-semibold text-[#d8e3fb]">{{ reply.authorName }}</p>
+                          <p class="text-xs uppercase tracking-[0.16em] text-[#859490]">{{ formatDate(reply.createdAt) }}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <p class="mt-4 whitespace-pre-wrap text-sm leading-8 text-[#bbcac6]">{{ reply.content }}</p>
+                  </article>
                 }
-                Reply
-              </button>
-            </div>
+              </section>
+            </section>
+
+            <aside class="space-y-6">
+              <div class="sanctuary-card rounded-[2rem] px-6 py-7 md:px-8">
+                <p class="text-[0.72rem] uppercase tracking-[0.3em] text-[#859490]">Reply composer</p>
+                <h3 class="mt-2 text-3xl font-bold">Add your perspective</h3>
+                <p class="mt-3 text-sm leading-7 text-[#bbcac6]">Keep answers practical, specific, and easy for another learner to act on.</p>
+                <textarea [(ngModel)]="newReplyContent" rows="8" placeholder="Write your response here..." aria-label="Reply content"
+                  class="sanctuary-input mt-6 w-full resize-y px-4 py-4 text-sm focus:outline-none"></textarea>
+                <button (click)="submitReply()" [disabled]="!newReplyContent.trim() || isSubmitting()"
+                  class="sanctuary-button mt-5 flex w-full items-center justify-center gap-2 rounded-[1.3rem] px-5 py-4 text-sm font-semibold disabled:opacity-50">
+                  @if (isSubmitting()) {
+                    <mat-icon class="h-4 w-4 animate-spin">refresh</mat-icon>
+                  }
+                  Post reply
+                </button>
+              </div>
+
+              <div class="sanctuary-card rounded-[2rem] px-6 py-7 md:px-8">
+                <p class="text-[0.72rem] uppercase tracking-[0.3em] text-[#859490]">Thread cues</p>
+                <div class="mt-5 space-y-4">
+                  <div class="rounded-[1.4rem] bg-[#111c2d] px-4 py-4">
+                    <p class="text-xs uppercase tracking-[0.16em] text-[#859490]">Best next step</p>
+                    <p class="mt-2 text-sm leading-7 text-[#bbcac6]">Answer the exact issue first, then add any broader explanation after the learner can move again.</p>
+                  </div>
+                  <div class="rounded-[1.4rem] bg-[#111c2d] px-4 py-4">
+                    <p class="text-xs uppercase tracking-[0.16em] text-[#859490]">Tone</p>
+                    <p class="mt-2 text-sm leading-7 text-[#bbcac6]">Prefer clear, calm, reproducible guidance over broad debate.</p>
+                  </div>
+                </div>
+              </div>
+            </aside>
           </div>
         }
-
       </div>
     </div>
   `
