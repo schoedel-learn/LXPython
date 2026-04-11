@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LearningAgentService, ChatMessage } from '../../services/learning.service';
 import { AuthService } from '../../services/auth.service';
@@ -158,7 +158,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
                   <span class="font-mono">main.py</span>
                 </div>
                 <div class="absolute inset-x-0 bottom-0 top-9">
-                  <div class="h-full" [class.hidden]="activeView() !== 'edit' && !isDesktopWorkspace">
+                  <div class="h-full" [class.hidden]="activeView() !== 'edit' && !isDesktopWorkspace()">
                     <ngx-monaco-editor [options]="editorOptions" [(ngModel)]="code" class="h-full min-h-0 w-full"></ngx-monaco-editor>
                   </div>
                 </div>
@@ -357,6 +357,8 @@ export class LearningModuleComponent implements OnInit {
   code = '# Write your Python code here\nprint("Hello, LXPython!")\n';
   outputResult = signal<ExecutionResult | null>(null);
   isExecuting = signal(false);
+  viewportWidth = signal(typeof window !== 'undefined' ? window.innerWidth : 1440);
+  isDesktopWorkspace = computed(() => this.viewportWidth() >= 1280);
 
   editorOptions = {
     theme: 'vs-dark',
@@ -386,12 +388,15 @@ export class LearningModuleComponent implements OnInit {
     padding: { top: 16, bottom: 16 }
   };
 
-  get isDesktopWorkspace(): boolean {
-    return typeof window !== 'undefined' && window.innerWidth >= 1280;
-  }
-
   async ngOnInit() {
     await this.loadChatHistory();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    if (typeof window !== 'undefined') {
+      this.viewportWidth.set(window.innerWidth);
+    }
   }
 
   async loadChatHistory() {
@@ -437,7 +442,7 @@ export class LearningModuleComponent implements OnInit {
       this.moduleContent.set(responseText);
       
       // Auto-switch to briefing on smaller layouts so the lesson remains visible
-      if (window.innerWidth < 1280) {
+      if (this.viewportWidth() < 1280) {
         this.activeMobileTab.set('brief');
       }
     } catch (error) {
@@ -490,7 +495,7 @@ export class LearningModuleComponent implements OnInit {
       }]);
       
       // Auto-switch to chat tab on mobile so they see the feedback
-      if (window.innerWidth < 1280) {
+      if (this.viewportWidth() < 1280) {
         this.activeMobileTab.set('coach');
       }
 
