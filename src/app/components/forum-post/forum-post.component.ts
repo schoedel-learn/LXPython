@@ -11,38 +11,38 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, MatIconModule, RouterModule],
   template: `
-    <div class="h-full w-full flex flex-col bg-[#131314] text-[#e3e3e3] overflow-y-auto p-4 md:p-8">
+    <div class="h-full w-full flex flex-col bg-[#081425] text-[#d8e3fb] overflow-y-auto p-4 md:p-8">
       <div class="max-w-4xl mx-auto w-full">
         
-        <button routerLink="/dashboard/forum" class="flex items-center gap-2 text-[#8ab4f8] hover:text-[#aecbfa] transition-colors mb-6 text-sm font-medium">
+        <button routerLink="/dashboard/forum" class="flex items-center gap-2 text-[#4fdbc8] hover:text-[#71f8e4] transition-colors mb-6 text-sm font-medium">
           <mat-icon class="text-[18px] h-[18px] w-[18px]">arrow_back</mat-icon> Back to Forum
         </button>
 
         @if (isLoading()) {
           <div class="flex justify-center py-12">
-            <mat-icon class="animate-spin text-[#8ab4f8] text-4xl h-10 w-10">refresh</mat-icon>
+            <mat-icon class="animate-spin text-[#4fdbc8] text-4xl h-10 w-10">refresh</mat-icon>
           </div>
         }
 
         @if (!isLoading() && !post()) {
-          <div class="bg-[#1e1f20] border border-[#444746] rounded-xl p-12 text-center">
-            <mat-icon class="text-[#8e918f] text-5xl h-12 w-12 mb-4">error_outline</mat-icon>
-            <h3 class="text-lg font-medium text-white mb-2">Post not found</h3>
-            <p class="text-[#8e918f]">This post may have been deleted or doesn't exist.</p>
+          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-12 text-center">
+            <mat-icon class="text-[#859490] text-5xl h-12 w-12 mb-4">error_outline</mat-icon>
+            <h3 class="text-lg font-medium text-[#d8e3fb] mb-2">Post not found</h3>
+            <p class="text-[#859490]">This post may have been deleted or doesn't exist.</p>
           </div>
         }
 
         @if (post(); as p) {
           <!-- Original Post -->
-          <div class="bg-[#1e1f20] border border-[#444746] rounded-xl p-6 mb-8 shadow-sm">
+          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-6 mb-8 shadow-sm">
             <div class="flex items-center gap-2 mb-4">
-              <span class="bg-[#282a2c] text-[#8ab4f8] border border-[#444746] px-2.5 py-1 rounded-full text-xs font-medium">
+              <span class="bg-[#1f2a3c] text-[#4fdbc8] border border-[#3c4947] px-2.5 py-1 rounded-full text-xs font-medium">
                 {{ p.tags[0] }}
               </span>
             </div>
-            <h1 class="text-2xl font-bold text-white mb-4">{{ p.title }}</h1>
-            <div class="flex items-center gap-4 text-sm text-[#8e918f] mb-6 pb-6 border-b border-[#444746]">
-              <span class="flex items-center gap-1 font-medium text-[#e3e3e3]">
+            <h1 class="text-2xl font-bold text-[#d8e3fb] mb-4">{{ p.title }}</h1>
+            <div class="flex items-center gap-4 text-sm text-[#859490] mb-6 pb-6 border-b border-[#3c4947]">
+              <span class="flex items-center gap-1 font-medium text-[#d8e3fb]">
                 <mat-icon class="text-[18px] h-[18px] w-[18px]">person</mat-icon> {{ p.authorName }}
               </span>
               <span class="flex items-center gap-1">
@@ -50,40 +50,40 @@ import { AuthService } from '../../services/auth.service';
               </span>
             </div>
             <div class="prose prose-invert max-w-none">
-              <p class="whitespace-pre-wrap text-[#e3e3e3] leading-relaxed">{{ p.content }}</p>
+              <p class="whitespace-pre-wrap text-[#d8e3fb] leading-relaxed">{{ p.content }}</p>
             </div>
           </div>
 
           <!-- Replies Section -->
-          <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-            <mat-icon class="text-[#8ab4f8]">chat</mat-icon> Replies ({{ p.replyCount }})
+          <h3 class="text-lg font-bold text-[#d8e3fb] mb-6 flex items-center gap-2">
+            <mat-icon class="text-[#4fdbc8]">chat</mat-icon> Replies ({{ p.replyCount }})
           </h3>
 
           <div class="flex flex-col gap-4 mb-8">
             @for (reply of replies(); track reply.id) {
-              <div class="bg-[#1e1f20] border border-[#444746] rounded-xl p-5 shadow-sm">
+              <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-5 shadow-sm">
                 <div class="flex items-center justify-between mb-3">
-                  <span class="flex items-center gap-2 font-medium text-[#e3e3e3] text-sm">
-                    <div class="w-6 h-6 rounded-full bg-[#282a2c] flex items-center justify-center text-xs text-[#8ab4f8] border border-[#444746]">
+                  <span class="flex items-center gap-2 font-medium text-[#d8e3fb] text-sm">
+                    <div class="w-6 h-6 rounded-full bg-[#1f2a3c] flex items-center justify-center text-xs text-[#4fdbc8] border border-[#3c4947]">
                       {{ reply.authorName.charAt(0).toUpperCase() }}
                     </div>
                     {{ reply.authorName }}
                   </span>
-                  <span class="text-xs text-[#8e918f]">{{ formatDate(reply.createdAt) }}</span>
+                  <span class="text-xs text-[#859490]">{{ formatDate(reply.createdAt) }}</span>
                 </div>
-                <p class="whitespace-pre-wrap text-[#e3e3e3] text-sm leading-relaxed">{{ reply.content }}</p>
+                <p class="whitespace-pre-wrap text-[#d8e3fb] text-sm leading-relaxed">{{ reply.content }}</p>
               </div>
             }
           </div>
 
           <!-- Add Reply Form -->
-          <div class="bg-[#1e1f20] border border-[#444746] rounded-xl p-6 shadow-sm">
-            <h4 class="text-base font-bold text-white mb-4">Add a Reply</h4>
+          <div class="bg-[#152031] border border-[#3c4947] rounded-xl p-6 shadow-sm">
+            <h4 class="text-base font-bold text-[#d8e3fb] mb-4">Add a Reply</h4>
             <textarea [(ngModel)]="newReplyContent" rows="4" placeholder="Write your response here..." aria-label="Reply content"
-              class="w-full bg-[#131314] border border-[#444746] rounded-lg px-4 py-3 text-sm text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors resize-y mb-4"></textarea>
+              class="w-full bg-[#081425] border border-[#3c4947] rounded-lg px-4 py-3 text-sm text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors resize-y mb-4"></textarea>
             <div class="flex justify-end">
               <button (click)="submitReply()" [disabled]="!newReplyContent.trim() || isSubmitting()"
-                class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] text-sm font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
+                class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] text-sm font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-50 flex items-center gap-2">
                 @if (isSubmitting()) {
                   <mat-icon class="animate-spin h-4 w-4">refresh</mat-icon>
                 }

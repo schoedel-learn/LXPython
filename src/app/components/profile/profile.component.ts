@@ -36,37 +36,37 @@ const COUNTRIES = [
     <div class="h-full overflow-y-auto p-6">
       <div class="max-w-2xl mx-auto">
         <div class="flex items-center justify-between mb-8">
-          <h2 class="text-2xl font-bold text-[#e3e3e3]">Your Profile</h2>
-          <div class="text-sm font-mono text-[#8e918f] bg-[#1e1f20] px-3 py-1 rounded-lg border border-[#444746]">
+          <h2 class="text-2xl font-bold text-[#d8e3fb]">Your Profile</h2>
+          <div class="text-sm font-mono text-[#859490] bg-[#152031] px-3 py-1 rounded-lg border border-[#3c4947]">
             ID: {{ authService.userProfile()?.customId }}
           </div>
         </div>
 
-        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6 bg-[#1e1f20] p-6 rounded-2xl border border-[#444746]">
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="space-y-6 bg-[#152031] p-6 rounded-2xl border border-[#3c4947]">
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label for="firstName" class="block text-sm font-medium text-[#c4c7c5] mb-2">First Name</label>
+              <label for="firstName" class="block text-sm font-medium text-[#bbcac6] mb-2">First Name</label>
               <input type="text" id="firstName" formControlName="firstName" 
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
             </div>
             
             <div>
-              <label for="email" class="block text-sm font-medium text-[#c4c7c5] mb-2">Email</label>
+              <label for="email" class="block text-sm font-medium text-[#bbcac6] mb-2">Email</label>
               <input type="email" id="email" formControlName="email" readonly
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#8e918f] cursor-not-allowed opacity-70">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#859490] cursor-not-allowed opacity-70">
             </div>
 
             <div>
-              <label for="phoneNumber" class="block text-sm font-medium text-[#c4c7c5] mb-2">Phone Number</label>
+              <label for="phoneNumber" class="block text-sm font-medium text-[#bbcac6] mb-2">Phone Number</label>
               <input type="tel" id="phoneNumber" formControlName="phoneNumber" 
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
             </div>
 
             <div>
-              <label for="country" class="block text-sm font-medium text-[#c4c7c5] mb-2">Country</label>
+              <label for="country" class="block text-sm font-medium text-[#bbcac6] mb-2">Country</label>
               <select id="country" formControlName="country" 
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors appearance-none">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors appearance-none">
                 <option value="">Select a country</option>
                 @for (country of countries; track country) {
                   <option [value]="country">{{ country }}</option>
@@ -75,15 +75,15 @@ const COUNTRIES = [
             </div>
 
             <div>
-              <label for="birthday" class="block text-sm font-medium text-[#c4c7c5] mb-2">Birthday (MM/DD)</label>
+              <label for="birthday" class="block text-sm font-medium text-[#bbcac6] mb-2">Birthday (MM/DD)</label>
               <input type="text" id="birthday" formControlName="birthday" placeholder="01/25"
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors">
             </div>
 
             <div>
-              <label for="pythonExperience" class="block text-sm font-medium text-[#c4c7c5] mb-2">Python Experience</label>
+              <label for="pythonExperience" class="block text-sm font-medium text-[#bbcac6] mb-2">Python Experience</label>
               <select id="pythonExperience" formControlName="pythonExperience" 
-                class="w-full bg-[#131314] border border-[#444746] rounded-xl px-4 py-2.5 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] transition-colors appearance-none">
+                class="w-full bg-[#081425] border border-[#3c4947] rounded-xl px-4 py-2.5 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] transition-colors appearance-none">
                 <option value="Beginner">Beginner</option>
                 <option value="Intermediate">Intermediate</option>
                 <option value="Advanced">Advanced</option>
@@ -93,12 +93,12 @@ const COUNTRIES = [
           </div>
 
           <div>
-            <div class="block text-sm font-medium text-[#c4c7c5] mb-2">Project Interests</div>
+            <div class="block text-sm font-medium text-[#bbcac6] mb-2">Project Interests</div>
             <div class="flex flex-wrap gap-2">
               @for (interest of availableInterests; track interest) {
                 <button type="button" 
                   (click)="toggleInterest(interest)"
-                  [class]="hasInterest(interest) ? 'bg-[#8ab4f8] text-[#131314] border-[#8ab4f8]' : 'bg-[#131314] text-[#c4c7c5] border-[#444746] hover:border-[#8ab4f8]'"
+                  [class]="hasInterest(interest) ? 'bg-[#4fdbc8] text-[#081425] border-[#4fdbc8]' : 'bg-[#081425] text-[#bbcac6] border-[#3c4947] hover:border-[#4fdbc8]'"
                   class="px-4 py-2 rounded-full border text-sm font-medium transition-colors duration-200">
                   {{ interest }}
                 </button>
@@ -107,30 +107,30 @@ const COUNTRIES = [
           </div>
 
           <!-- Newsletter Opt-in -->
-          <div class="bg-[#282a2c] rounded-xl p-4 border border-[#444746]">
+          <div class="bg-[#1f2a3c] rounded-xl p-4 border border-[#3c4947]">
             <label class="flex items-start gap-3 cursor-pointer">
               <div class="mt-1">
                 <input type="checkbox" formControlName="newsletterOptIn"
-                  class="w-5 h-5 rounded border-[#444746] bg-[#131314] text-[#8ab4f8] focus:ring-[#8ab4f8] focus:ring-offset-[#131314]">
+                  class="w-5 h-5 rounded border-[#3c4947] bg-[#081425] text-[#4fdbc8] focus:ring-[#4fdbc8] focus:ring-offset-[#081425]">
               </div>
               <div class="flex-1">
-                <span class="block font-medium text-[#e3e3e3]">Opt-in to LXPython Communications</span>
-                <span class="block text-sm text-[#8e918f] mt-1">
+                <span class="block font-medium text-[#d8e3fb]">Opt-in to LXPython Communications</span>
+                <span class="block text-sm text-[#859490] mt-1">
                   Receive infrequent updates, tips, and news.
                 </span>
               </div>
             </label>
             
             @if (profileForm.get('newsletterOptIn')?.value && !authService.userProfile()?.newsletterConfirmed && authService.userProfile()?.email !== 'schoedelb@gmail.com') {
-              <div class="mt-4 ml-8 p-3 bg-[#8ab4f8]/10 border border-[#8ab4f8]/30 rounded-lg flex items-center justify-between">
-                <span class="text-sm text-[#8ab4f8]">Please confirm your subscription.</span>
+              <div class="mt-4 ml-8 p-3 bg-[#4fdbc8]/10 border border-[#4fdbc8]/30 rounded-lg flex items-center justify-between">
+                <span class="text-sm text-[#4fdbc8]">Please confirm your subscription.</span>
                 <button type="button" (click)="confirmNewsletter()"
-                  class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] text-xs font-bold py-1.5 px-3 rounded-md transition-colors">
+                  class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] text-xs font-bold py-1.5 px-3 rounded-md transition-colors">
                   Simulate Confirmation
                 </button>
               </div>
             } @else if (profileForm.get('newsletterOptIn')?.value && authService.userProfile()?.newsletterConfirmed) {
-              <div class="mt-4 ml-8 flex items-center gap-2 text-sm text-[#81c995]">
+              <div class="mt-4 ml-8 flex items-center gap-2 text-sm text-[#a0d0c6]">
                 <mat-icon class="h-4 w-4 text-[16px]">check_circle</mat-icon> Subscription Confirmed
               </div>
             }
@@ -138,7 +138,7 @@ const COUNTRIES = [
 
           <div class="pt-4 flex justify-end">
             <button type="submit" [disabled]="profileForm.invalid || isSaving"
-              class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] font-medium py-2.5 px-6 rounded-xl transition-colors duration-200 disabled:opacity-50 flex items-center gap-2">
+              class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] font-medium py-2.5 px-6 rounded-xl transition-colors duration-200 disabled:opacity-50 flex items-center gap-2">
               @if (isSaving) {
                 <mat-icon class="animate-spin h-5 w-5">refresh</mat-icon>
                 Saving...

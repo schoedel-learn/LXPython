@@ -15,50 +15,50 @@ import { auth } from '../../../firebase';
   template: `
     <div class="p-6 max-w-4xl mx-auto">
       <div class="mb-8">
-        <h2 class="text-2xl font-bold text-[#e3e3e3] mb-2">Environment Variables</h2>
-        <p class="text-[#8e918f]">Securely store API keys and passwords for your Python projects.</p>
+        <h2 class="text-2xl font-bold text-[#d8e3fb] mb-2">Environment Variables</h2>
+        <p class="text-[#859490]">Securely store API keys and passwords for your Python projects.</p>
       </div>
 
       @if (!isVerified()) {
-        <div class="bg-[#1e1f20] border border-[#444746] rounded-2xl p-8 text-center max-w-md mx-auto mt-12">
-          <mat-icon class="text-[#8ab4f8] h-12 w-12 mb-4">security</mat-icon>
-          <h3 class="text-xl font-bold text-[#e3e3e3] mb-2">Admin Verification Required</h3>
-          <p class="text-[#8e918f] mb-6 text-sm">Please re-authenticate to access your environment variables.</p>
+        <div class="bg-[#152031] border border-[#3c4947] rounded-2xl p-8 text-center max-w-md mx-auto mt-12">
+          <mat-icon class="text-[#4fdbc8] h-12 w-12 mb-4">security</mat-icon>
+          <h3 class="text-xl font-bold text-[#d8e3fb] mb-2">Admin Verification Required</h3>
+          <p class="text-[#859490] mb-6 text-sm">Please re-authenticate to access your environment variables.</p>
           <button (click)="verifyAdmin()"
-            class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] font-medium py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2 mx-auto">
+            class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] font-medium py-2.5 px-6 rounded-xl transition-colors flex items-center gap-2 mx-auto">
             <mat-icon class="h-5 w-5">lock_open</mat-icon> Verify Identity
           </button>
         </div>
       } @else {
-        <div class="bg-[#1e1f20] border border-[#444746] rounded-2xl overflow-hidden mb-8">
-          <div class="p-4 border-b border-[#444746] bg-[#282a2c] flex justify-between items-center">
-            <h3 class="font-medium text-[#e3e3e3]">Your Secrets</h3>
+        <div class="bg-[#152031] border border-[#3c4947] rounded-2xl overflow-hidden mb-8">
+          <div class="p-4 border-b border-[#3c4947] bg-[#1f2a3c] flex justify-between items-center">
+            <h3 class="font-medium text-[#d8e3fb]">Your Secrets</h3>
             @if (!isAdding()) {
               <button (click)="isAdding.set(true)"
-                class="bg-[#8ab4f8] hover:bg-[#aecbfa] text-[#131314] text-sm font-medium py-1.5 px-4 rounded-lg transition-colors flex items-center gap-1">
+                class="bg-[#4fdbc8] hover:bg-[#71f8e4] text-[#081425] text-sm font-medium py-1.5 px-4 rounded-lg transition-colors flex items-center gap-1">
                 <mat-icon class="h-4 w-4 text-[16px]">add</mat-icon> Add Secret
               </button>
             }
           </div>
 
           @if (isAdding()) {
-            <form [formGroup]="secretForm" (ngSubmit)="saveSecret()" class="p-4 border-b border-[#444746] bg-[#131314]">
+            <form [formGroup]="secretForm" (ngSubmit)="saveSecret()" class="p-4 border-b border-[#3c4947] bg-[#081425]">
               <div class="flex gap-4 items-start">
                 <div class="flex-1">
                   <input type="text" formControlName="key" placeholder="e.g. OPENAI_API_KEY"
-                    class="w-full bg-[#1e1f20] border border-[#444746] rounded-lg px-3 py-2 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] font-mono text-sm">
+                    class="w-full bg-[#152031] border border-[#3c4947] rounded-lg px-3 py-2 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] font-mono text-sm">
                 </div>
                 <div class="flex-1">
                   <input type="password" formControlName="value" placeholder="Value"
-                    class="w-full bg-[#1e1f20] border border-[#444746] rounded-lg px-3 py-2 text-[#e3e3e3] focus:outline-none focus:border-[#8ab4f8] font-mono text-sm">
+                    class="w-full bg-[#152031] border border-[#3c4947] rounded-lg px-3 py-2 text-[#d8e3fb] focus:outline-none focus:border-[#4fdbc8] font-mono text-sm">
                 </div>
                 <div class="flex gap-2">
                   <button type="submit" [disabled]="secretForm.invalid"
-                    class="bg-[#81c995] hover:bg-[#a8dab5] text-[#131314] p-2 rounded-lg transition-colors disabled:opacity-50">
+                    class="bg-[#a0d0c6] hover:bg-[#bbece2] text-[#081425] p-2 rounded-lg transition-colors disabled:opacity-50">
                     <mat-icon class="h-5 w-5">check</mat-icon>
                   </button>
                   <button type="button" (click)="cancelAdd()"
-                    class="bg-[#444746] hover:bg-[#5f6368] text-[#e3e3e3] p-2 rounded-lg transition-colors">
+                    class="bg-[#3c4947] hover:bg-[#5f6368] text-[#d8e3fb] p-2 rounded-lg transition-colors">
                     <mat-icon class="h-5 w-5">close</mat-icon>
                   </button>
                 </div>
@@ -66,30 +66,30 @@ import { auth } from '../../../firebase';
             </form>
           }
 
-          <div class="divide-y divide-[#444746]">
+          <div class="divide-y divide-[#3c4947]">
             @for (secret of secretsService.secrets(); track secret.id) {
-              <div class="p-4 flex items-center justify-between hover:bg-[#282a2c] transition-colors">
+              <div class="p-4 flex items-center justify-between hover:bg-[#1f2a3c] transition-colors">
                 <div class="flex items-center gap-4">
-                  <div class="bg-[#131314] border border-[#444746] rounded p-2">
-                    <mat-icon class="text-[#8ab4f8] h-5 w-5">vpn_key</mat-icon>
+                  <div class="bg-[#081425] border border-[#3c4947] rounded p-2">
+                    <mat-icon class="text-[#4fdbc8] h-5 w-5">vpn_key</mat-icon>
                   </div>
                   <div>
-                    <div class="font-mono text-sm text-[#e3e3e3]">{{ secret.key }}</div>
-                    <div class="text-xs text-[#8e918f]">Updated: {{ secret.updatedAt | date:'short' }}</div>
+                    <div class="font-mono text-sm text-[#d8e3fb]">{{ secret.key }}</div>
+                    <div class="text-xs text-[#859490]">Updated: {{ secret.updatedAt | date:'short' }}</div>
                   </div>
                 </div>
                 <div class="flex items-center gap-4">
-                  <div class="font-mono text-sm text-[#8e918f] bg-[#131314] px-3 py-1 rounded border border-[#444746]">
+                  <div class="font-mono text-sm text-[#859490] bg-[#081425] px-3 py-1 rounded border border-[#3c4947]">
                     ••••••••••••••••
                   </div>
                   <button (click)="deleteSecret(secret.id)"
-                    class="text-[#f28b82] hover:bg-[#f28b82]/10 p-2 rounded-lg transition-colors">
+                    class="text-[#ffb4ab] hover:bg-[#ffb4ab]/10 p-2 rounded-lg transition-colors">
                     <mat-icon class="h-5 w-5">delete</mat-icon>
                   </button>
                 </div>
               </div>
             } @empty {
-              <div class="p-8 text-center text-[#8e918f]">
+              <div class="p-8 text-center text-[#859490]">
                 <mat-icon class="h-12 w-12 mb-2 opacity-50">lock_outline</mat-icon>
                 <p>No secrets stored yet.</p>
               </div>
