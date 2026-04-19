@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, ADMIN_EMAIL } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { auth } from '../../../firebase';
 
@@ -329,7 +329,7 @@ export class OnboardingComponent implements OnInit {
     const user = this.authService.currentUser();
     if (!user) return false;
     // Admin bypasses email verification
-    if (user.email === 'schoedelb@gmail.com') return true;
+    if (user.email === ADMIN_EMAIL) return true;
     return user.emailVerified;
   }
 

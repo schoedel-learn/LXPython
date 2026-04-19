@@ -1,9 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-auth',
   standalone: true,
+  imports: [MatIconModule],
   template: `
     <div class="min-h-[100dvh] bg-[#081425] text-[#d8e3fb] px-4 py-8 md:px-8">
       <div class="mx-auto flex min-h-[calc(100dvh-4rem)] max-w-7xl flex-col justify-center gap-8 xl:grid xl:grid-cols-[1.1fr_0.9fr]">
@@ -91,11 +93,28 @@ import { AuthService } from '../../services/auth.service';
                 <span>Registration + login</span>
                 <span class="rounded-full bg-[#1f2a3c] px-3 py-1 text-[0.62rem] uppercase tracking-[0.18em] text-[#4fdbc8]">Redesigned</span>
               </div>
+
+              @if (loginError()) {
+                <div class="mb-4 flex items-start gap-3 rounded-[1.25rem] bg-[#ffb4ab]/10 px-4 py-4">
+                  <mat-icon class="mt-0.5 h-5 w-5 shrink-0 text-[20px] text-[#ffb4ab]">lock</mat-icon>
+                  <div>
+                    <p class="text-sm font-semibold text-[#ffb4ab]">Access restricted</p>
+                    <p class="mt-1 text-xs leading-6 text-[#ffb4ab]/80">{{ loginError() }}</p>
+                  </div>
+                </div>
+              }
+
               <button
                 (click)="login()"
-                class="sanctuary-button flex w-full items-center justify-center gap-3 rounded-[1.5rem] px-5 py-4 text-base font-semibold transition-transform duration-200 active:scale-[0.99]">
-                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-base font-bold text-[#003731]">G</span>
-                Sign in with Google
+                [disabled]="isLoggingIn()"
+                class="sanctuary-button flex w-full items-center justify-center gap-3 rounded-[1.5rem] px-5 py-4 text-base font-semibold transition-transform duration-200 active:scale-[0.99] disabled:opacity-60">
+                @if (isLoggingIn()) {
+                  <div class="h-5 w-5 animate-spin rounded-full border-2 border-[#003731] border-t-transparent"></div>
+                  Signing in…
+                } @else {
+                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-base font-bold text-[#003731]">G</span>
+                  Sign in with Google
+                }
               </button>
               <p class="mt-4 text-center text-xs leading-6 text-[#859490]">
                 New accounts are guided through a short onboarding flow before entering the workspace.
@@ -127,12 +146,23 @@ import { AuthService } from '../../services/auth.service';
 })
 export class AuthComponent {
   authService = inject(AuthService);
+  isLoggingIn = signal(false);
+  loginError = signal<string | null>(null);
 
   async login() {
+    this.loginError.set(null);
+    this.isLoggingIn.set(true);
     try {
       await this.authService.loginWithGoogle();
-    } catch (error) {
-      console.error('Failed to login', error);
+    } catch (error: unknown) {
+      if (error instanceof Error && error.message === 'ACCESS_DENIED') {
+        this.loginError.set('This workspace is currently private. Only authorised accounts may sign in.');
+      } else {
+        this.loginError.set('Sign-in failed. Please try again.');
+        console.error('Failed to login', error);
+      }
+    } finally {
+      this.isLoggingIn.set(false);
     }
   }
 }
