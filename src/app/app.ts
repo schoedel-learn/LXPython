@@ -39,9 +39,10 @@ export class App {
             return;
           }
 
+          const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
           const isRegistered = profile?.registrationComplete;
 
-          if (!user.emailVerified || !isRegistered) {
+          if (!isEmailVerified || !isRegistered) {
             if (!this.router.url.includes('/onboarding')) {
               this.router.navigate(['/onboarding']);
             }

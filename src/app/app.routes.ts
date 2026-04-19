@@ -22,7 +22,8 @@ const authGuard = () => {
     return router.parseUrl('/login');
   }
 
-  if (!user.emailVerified || !profile?.registrationComplete) {
+  const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
+  if (!isEmailVerified || !profile?.registrationComplete) {
     return router.parseUrl('/onboarding');
   }
 
@@ -49,7 +50,8 @@ const onboardingGuard = () => {
     return router.parseUrl('/login');
   }
 
-  if (user.emailVerified && profile?.registrationComplete) {
+  const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
+  if (isEmailVerified && profile?.registrationComplete) {
     return router.parseUrl('/dashboard/learn');
   }
 
