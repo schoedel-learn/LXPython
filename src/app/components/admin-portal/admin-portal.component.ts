@@ -1,5 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { AuthService, UserProfile } from '../../services/auth.service';
+import { AuthService, ADMIN_EMAIL, UserProfile } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -105,7 +105,7 @@ export class AdminPortalComponent implements OnInit {
   subscribers = signal<UserProfile[]>([]);
 
   async ngOnInit() {
-    if (this.authService.userProfile()?.email !== 'schoedelb@gmail.com') {
+    if (this.authService.userProfile()?.email !== ADMIN_EMAIL) {
       this.router.navigate(['/dashboard/learn']);
       return;
     }

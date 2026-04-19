@@ -1,5 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, ADMIN_EMAIL } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -163,7 +163,7 @@ const COUNTRIES = [
                 </div>
               </label>
 
-              @if (profileForm.get('newsletterOptIn')?.value && !authService.userProfile()?.newsletterConfirmed && authService.userProfile()?.email !== 'schoedelb@gmail.com') {
+              @if (profileForm.get('newsletterOptIn')?.value && !authService.userProfile()?.newsletterConfirmed && authService.userProfile()?.email !== ADMIN_EMAIL) {
                 <div class="mt-4 flex flex-col gap-3 rounded-[1.25rem] bg-[#081425] p-4 md:flex-row md:items-center md:justify-between">
                   <span class="text-sm text-[#4fdbc8]">Your subscription still needs confirmation.</span>
                   <button type="button" (click)="confirmNewsletter()" class="sanctuary-button rounded-[1rem] px-4 py-2 text-xs font-semibold">
@@ -198,7 +198,10 @@ const COUNTRIES = [
 export class ProfileComponent implements OnInit {
   authService = inject(AuthService);
   fb = inject(FormBuilder);
-  
+
+  /** Exposed so the template can reference the constant without a pipe. */
+  protected readonly ADMIN_EMAIL = ADMIN_EMAIL;
+
   countries = COUNTRIES;
   profileForm: FormGroup;
   isSaving = false;
@@ -267,7 +270,7 @@ export class ProfileComponent implements OnInit {
       let confirmed = currentProfile?.newsletterConfirmed || false;
       
       if (formValue.newsletterOptIn && !currentProfile?.newsletterOptIn) {
-        confirmed = currentProfile?.email === 'schoedelb@gmail.com';
+        confirmed = currentProfile?.email === ADMIN_EMAIL;
       }
 
       await this.authService.updateProfile({

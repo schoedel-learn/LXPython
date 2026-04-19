@@ -1,9 +1,12 @@
 import { Injectable, signal } from '@angular/core';
 import { auth, db } from '../../firebase';
-import { GoogleAuthProvider, signInWithPopup, signOut, User as FirebaseUser, sendEmailVerification } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signOut, User as FirebaseUser, sendEmailVerification, UserCredential } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { customAlphabet } from 'nanoid';
+
+/** Single source of truth for the privileged admin account. */
+export const ADMIN_EMAIL = 'schoedelb@gmail.com';
 
 const generateCustomId = customAlphabet('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*+_-!?', 8);
 
@@ -33,6 +36,13 @@ export class AuthService {
 
   constructor() {
     auth.onAuthStateChanged(async (user) => {
+      // Only the admin account is allowed to use the app.
+      // Silently sign out any other authenticated user before updating signals,
+      // so no Firestore profile can be created for a non-admin.
+      if (user && user.email !== ADMIN_EMAIL) {
+        await signOut(auth);
+        return;
+      }
       this.currentUser.set(user);
       if (user) {
         await this.loadUserProfile(user);
@@ -44,14 +54,24 @@ export class AuthService {
   }
 
   async loginWithGoogle() {
+    const provider = new GoogleAuthProvider();
+    let result: UserCredential;
     try {
-      const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      await this.loadUserProfile(result.user);
+      result = await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Google sign-in error:', error);
       throw error;
     }
+
+    if (result.user.email !== ADMIN_EMAIL) {
+      // Sign the non-admin user out immediately so no session is created.
+      // The onAuthStateChanged guard also catches this, but signOut here
+      // keeps the error path explicit and fast.
+      await signOut(auth);
+      throw new Error('ACCESS_DENIED');
+    }
+
+    await this.loadUserProfile(result.user);
   }
 
   async logout() {
@@ -66,7 +86,6 @@ export class AuthService {
       this.userProfile.set(docSnap.data() as UserProfile);
     } else {
       // Create new profile
-      const isAdmin = user.email === 'schoedelb@gmail.com';
       const newProfile: UserProfile = {
         uid: user.uid,
         customId: generateCustomId(),
@@ -75,8 +94,8 @@ export class AuthService {
         dateJoined: new Date().toISOString(),
         pythonExperience: 'Beginner',
         registrationComplete: false,
-        newsletterOptIn: isAdmin,
-        newsletterConfirmed: isAdmin
+        newsletterOptIn: true,
+        newsletterConfirmed: true
       };
       await setDoc(docRef, newProfile);
       this.userProfile.set(newProfile);

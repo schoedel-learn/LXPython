@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, inject, effect} from '@angular/core';
 import {RouterOutlet, Router} from '@angular/router';
-import { AuthService } from './services/auth.service';
+import { AuthService, ADMIN_EMAIL } from './services/auth.service';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,12 +29,20 @@ export class App {
       if (this.authService.isAuthReady()) {
         const user = this.authService.currentUser();
         const profile = this.authService.userProfile();
-        
+
         if (user) {
-          const isVerified = user.email === 'schoedelb@gmail.com' || user.emailVerified;
+          // Only the admin account may use the app. Any other signed-in user
+          // is immediately signed out and sent back to the login page.
+          if (user.email !== ADMIN_EMAIL) {
+            void this.authService.logout();
+            this.router.navigate(['/login']);
+            return;
+          }
+
+          const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
           const isRegistered = profile?.registrationComplete;
-          
-          if (!isVerified || !isRegistered) {
+
+          if (!isEmailVerified || !isRegistered) {
             if (!this.router.url.includes('/onboarding')) {
               this.router.navigate(['/onboarding']);
             }

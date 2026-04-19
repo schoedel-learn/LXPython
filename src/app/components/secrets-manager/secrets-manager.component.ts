@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { SecretsService } from '../../services/secrets.service';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, ADMIN_EMAIL } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DatePipe } from '@angular/common';
@@ -151,7 +151,7 @@ export class SecretsManagerComponent implements OnInit {
 
   async ngOnInit() {
     // Only allow admin
-    if (this.authService.userProfile()?.email !== 'schoedelb@gmail.com') {
+    if (this.authService.userProfile()?.email !== ADMIN_EMAIL) {
       this.router.navigate(['/dashboard/learn']);
       return;
     }

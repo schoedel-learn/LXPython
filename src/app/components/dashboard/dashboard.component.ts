@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService, ADMIN_EMAIL } from '../../services/auth.service';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 
@@ -211,7 +211,7 @@ export class DashboardComponent {
   deleteEmailConfirm = '';
 
   isAdmin() {
-    return this.authService.userProfile()?.email === 'schoedelb@gmail.com';
+    return this.authService.userProfile()?.email === ADMIN_EMAIL;
   }
 
   async logout() {
