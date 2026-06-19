@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { auth, db } from '../../firebase';
-import { GoogleAuthProvider, signInWithPopup, signOut, User as FirebaseUser, sendEmailVerification } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signInAnonymously, signOut, User as FirebaseUser, sendEmailVerification } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { FirebaseError } from 'firebase/app';
 import { customAlphabet } from 'nanoid';
@@ -54,6 +54,16 @@ export class AuthService {
     }
   }
 
+  async loginAnonymously() {
+    try {
+      const result = await signInAnonymously(auth);
+      await this.loadUserProfile(result.user);
+    } catch (error) {
+      console.error('Anonymous login error:', error);
+      throw error;
+    }
+  }
+
   async logout() {
     await signOut(auth);
   }
@@ -70,8 +80,8 @@ export class AuthService {
       const newProfile: UserProfile = {
         uid: user.uid,
         customId: generateCustomId(),
-        firstName: user.displayName?.split(' ')[0] || 'Learner',
-        email: user.email || '',
+        firstName: user.displayName?.split(' ')[0] || 'Guest',
+        email: user.email || `guest_${user.uid.slice(0, 6)}@lxpython.app`,
         dateJoined: new Date().toISOString(),
         pythonExperience: 'Beginner',
         registrationComplete: false,

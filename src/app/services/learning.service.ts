@@ -138,9 +138,9 @@ export class LearningAgentService {
     // Add the current message
     messages.push({ role: 'user', parts: [{ text: message }] });
 
-    let modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gemini-3.1-pro-preview';
-    if (modelName.includes('gpt') || modelName.includes('claude')) {
-      modelName = 'gemini-3.1-pro-preview';
+    let modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gemini-3.5-flash';
+    if (modelName.includes('gpt') || modelName.includes('claude') || modelName.includes('pro')) {
+      modelName = 'gemini-3.5-flash';
     }
 
     try {

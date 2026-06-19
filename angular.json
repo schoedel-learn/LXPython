@@ -20,8 +20,8 @@
           "builder": "@angular/build:application",
           "options": {
             "define": {
-              "OPENAI_API_KEY": "'YOUR_OPENAI_API_KEY'",
-              "DEFAULT_AI_MODEL": "'gpt-5.4-mini'"
+              "GEMINI_API_KEY": "'YOUR_GEMINI_API_KEY'",
+              "DEFAULT_AI_MODEL": "'gemini-3.5-flash'"
             },
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
