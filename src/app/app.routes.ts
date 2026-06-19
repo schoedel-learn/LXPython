@@ -9,7 +9,7 @@ import { AdminPortalComponent } from './components/admin-portal/admin-portal.com
 import { ForumListComponent } from './components/forum-list/forum-list.component';
 import { ForumPostComponent } from './components/forum-post/forum-post.component';
 import { inject } from '@angular/core';
-import { AuthService, ADMIN_EMAIL } from './services/auth.service';
+import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 
 const authGuard = () => {
@@ -17,24 +17,25 @@ const authGuard = () => {
   const router = inject(Router);
   const user = authService.currentUser();
   const profile = authService.userProfile();
-
-  if (!user || user.email !== ADMIN_EMAIL) {
+  
+  if (!user) {
     return router.parseUrl('/login');
   }
-
-  const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
-  if (!isEmailVerified || !profile?.registrationComplete) {
+  
+  // Admin bypasses email verification
+  const isVerified = user.email === 'schoedelb@gmail.com' || user.emailVerified;
+  
+  if (!isVerified || !profile?.registrationComplete) {
     return router.parseUrl('/onboarding');
   }
-
+  
   return true;
 };
 
 const publicGuard = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const user = authService.currentUser();
-  if (!user || user.email !== ADMIN_EMAIL) {
+  if (!authService.currentUser()) {
     return true;
   }
   return router.parseUrl('/dashboard/learn');
@@ -45,16 +46,16 @@ const onboardingGuard = () => {
   const router = inject(Router);
   const user = authService.currentUser();
   const profile = authService.userProfile();
-
-  if (!user || user.email !== ADMIN_EMAIL) {
+  
+  if (!user) {
     return router.parseUrl('/login');
   }
-
-  const isEmailVerified = user.email === ADMIN_EMAIL || user.emailVerified;
-  if (isEmailVerified && profile?.registrationComplete) {
+  
+  const isVerified = user.email === 'schoedelb@gmail.com' || user.emailVerified;
+  if (isVerified && profile?.registrationComplete) {
     return router.parseUrl('/dashboard/learn');
   }
-
+  
   return true;
 };
 

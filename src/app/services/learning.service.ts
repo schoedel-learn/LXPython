@@ -1,12 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import OpenAI from 'openai';
+import { GoogleGenAI, Type, FunctionDeclaration, Content } from '@google/genai';
 import { UserProfile } from './auth.service';
 import { MemoryService } from './memory.service';
 import { collection, doc, setDoc, getDocs, query, orderBy } from 'firebase/firestore';
 import { db, auth } from '../../firebase';
 
-// Using the global variable defined in globals.d.ts or .env
-declare const OPENAI_API_KEY: string;
+declare const GEMINI_API_KEY: string;
 declare const DEFAULT_AI_MODEL: string | undefined;
 
 export interface ChatMessage {
@@ -20,13 +19,15 @@ export interface ChatMessage {
   providedIn: 'root'
 })
 export class LearningAgentService {
-  private ai: OpenAI;
+  private ai: GoogleGenAI;
   private memoryService = inject(MemoryService);
 
   constructor() {
-    this.ai = new OpenAI({ 
-      apiKey: typeof OPENAI_API_KEY !== 'undefined' ? OPENAI_API_KEY : '', 
-      dangerouslyAllowBrowser: true 
+    if (typeof GEMINI_API_KEY === 'undefined' || !GEMINI_API_KEY) {
+      console.warn('GEMINI_API_KEY is not set. Chat functionality will not work.');
+    }
+    this.ai = new GoogleGenAI({ 
+      apiKey: typeof GEMINI_API_KEY !== 'undefined' ? GEMINI_API_KEY : ''
     });
   }
 
@@ -104,98 +105,112 @@ export class LearningAgentService {
       5. Keep responses concise and highly structured. Use markdown formatting.
     `;
 
-    const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
-      {
-        type: 'function',
-        function: {
-          name: 'save_learner_memory',
-          description: 'Save an insight, preference, milestone, or struggle about the learner to their permanent memory log.',
-          parameters: {
-            type: 'object',
-            properties: {
-              category: {
-                type: 'string',
-                enum: ['preference', 'milestone', 'struggle', 'general'],
-                description: 'The category of the memory.',
-              },
-              content: {
-                type: 'string',
-                description: 'The content of the memory to save.',
-              },
-            },
-            required: ['category', 'content'],
+    const saveLearnerMemoryDeclaration: FunctionDeclaration = {
+      name: 'save_learner_memory',
+      description: 'Save an insight, preference, milestone, or struggle about the learner to their permanent memory log.',
+      parameters: {
+        type: Type.OBJECT,
+        properties: {
+          category: {
+            type: Type.STRING,
+            description: 'The category of the memory. Must be one of: preference, milestone, struggle, general',
           },
-        }
-      }
-    ];
+          content: {
+            type: Type.STRING,
+            description: 'The content of the memory to save.',
+          },
+        },
+        required: ['category', 'content'],
+      },
+    };
 
     // 3. Fetch previous chat history to build the session
     const history = await this.getChatHistory();
     
-    // Map our DB roles to OpenAI roles
-    const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
-      { role: 'system', content: systemInstruction },
+    // Map our DB roles to Gemini roles
+    const messages: Content[] = [
       ...history.map(msg => ({
-        role: (msg.role === 'model' ? 'assistant' : msg.role) as 'user' | 'assistant' | 'system',
-        content: msg.content
+        role: (msg.role === 'assistant' || msg.role === 'model') ? 'model' : 'user',
+        parts: [{ text: msg.content }]
       }))
     ];
 
     // Add the current message
-    messages.push({ role: 'user', content: message });
+    messages.push({ role: 'user', parts: [{ text: message }] });
 
-    const modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gpt-5.4-mini';
+    let modelName = typeof DEFAULT_AI_MODEL !== 'undefined' ? DEFAULT_AI_MODEL : 'gemini-3.1-pro-preview';
+    if (modelName.includes('gpt') || modelName.includes('claude')) {
+      modelName = 'gemini-3.1-pro-preview';
+    }
 
     try {
-      const response = await this.ai.chat.completions.create({
+      const response = await this.ai.models.generateContent({
         model: modelName,
-        messages: messages,
-        temperature: 0.7,
-        tools: tools,
-        reasoning_effort: 'medium' // Requested by user for models that support it
+        contents: messages,
+        config: {
+          systemInstruction: systemInstruction,
+          temperature: 0.7,
+          tools: [{ functionDeclarations: [saveLearnerMemoryDeclaration] }],
+        }
       });
 
-      const responseMessage = response.choices[0].message;
-      let finalResponseText = responseMessage.content || '';
+      let finalResponseText = response.text || '';
 
       // Handle function calls
-      if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
-        messages.push(responseMessage); // Add the assistant's tool call to history
+      const functionCalls = response.functionCalls;
+      if (functionCalls && functionCalls.length > 0) {
+        // Add the model's tool call to history
+        messages.push({
+          role: 'model',
+          parts: response.candidates?.[0]?.content?.parts || []
+        });
         
-        for (const toolCall of responseMessage.tool_calls) {
-          if (toolCall.type === 'function' && toolCall.function.name === 'save_learner_memory') {
+        const toolResponses = [];
+        for (const toolCall of functionCalls) {
+          if (toolCall.name === 'save_learner_memory') {
             try {
-              const args = JSON.parse(toolCall.function.arguments);
-              if (args.category && args.content) {
-                await this.memoryService.saveMemory(args.category, args.content);
+              const args = toolCall.args as Record<string, unknown>;
+              if (typeof args['category'] === 'string' && typeof args['content'] === 'string') {
+                const category = args['category'] as 'preference' | 'milestone' | 'struggle' | 'general';
+                await this.memoryService.saveMemory(category, args['content']);
                 
-                // Send the result back to the model
-                messages.push({
-                  role: 'tool',
-                  tool_call_id: toolCall.id,
-                  content: JSON.stringify({ status: 'success', message: 'Memory saved successfully.' })
+                toolResponses.push({
+                  functionResponse: {
+                    name: toolCall.name,
+                    response: { status: 'success', message: 'Memory saved successfully.' }
+                  }
                 });
               }
             } catch (e) {
               console.error('Failed to parse tool call arguments:', e);
-              messages.push({
-                role: 'tool',
-                tool_call_id: toolCall.id,
-                content: JSON.stringify({ status: 'error', message: 'Invalid JSON arguments' })
+              toolResponses.push({
+                functionResponse: {
+                  name: toolCall.name,
+                  response: { status: 'error', message: 'Invalid arguments' }
+                }
               });
             }
           }
         }
         
-        // Get the final response after tool execution
-        const secondResponse = await this.ai.chat.completions.create({
-          model: modelName,
-          messages: messages,
-          temperature: 0.7,
-          reasoning_effort: 'medium'
-        });
-        
-        finalResponseText = secondResponse.choices[0].message.content || finalResponseText;
+        if (toolResponses.length > 0) {
+          messages.push({
+            role: 'user',
+            parts: toolResponses
+          });
+
+          // Get the final response after tool execution
+          const secondResponse = await this.ai.models.generateContent({
+            model: modelName,
+            contents: messages,
+            config: {
+              systemInstruction: systemInstruction,
+              temperature: 0.7,
+            }
+          });
+          
+          finalResponseText = secondResponse.text || finalResponseText;
+        }
       }
 
       // 4. Save AI response
@@ -208,3 +223,4 @@ export class LearningAgentService {
     }
   }
 }
+
